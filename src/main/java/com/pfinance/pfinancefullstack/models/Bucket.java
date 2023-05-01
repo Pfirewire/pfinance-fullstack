@@ -1,6 +1,9 @@
 package com.pfinance.pfinancefullstack.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "buckets")
@@ -25,6 +28,14 @@ public class Bucket {
 
     @Enumerated(EnumType.ORDINAL)
     private RecurringInterval recurringInterval;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
+
+    @OneToMany(mappedBy = "bucket")
+    private List<Expense> expenses;
 
     public Bucket() {
 
@@ -75,5 +86,21 @@ public class Bucket {
 
     public void setRecurringInterval(RecurringInterval recurringInterval) {
         this.recurringInterval = recurringInterval;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<Expense> expenses) {
+        this.expenses = expenses;
     }
 }

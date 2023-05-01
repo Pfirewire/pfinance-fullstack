@@ -1,12 +1,12 @@
 package com.pfinance.pfinancefullstack.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.util.Date;
 
+@Entity
+@Table(name = "expenses")
 public class Expense {
 
     @Id
@@ -19,8 +19,13 @@ public class Expense {
     @Column(nullable = false)
     private double amount;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String notes;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "bucket_id")
+    private Bucket bucket;
 
     public Expense() {
 
