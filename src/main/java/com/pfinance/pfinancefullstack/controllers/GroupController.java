@@ -3,6 +3,7 @@ package com.pfinance.pfinancefullstack.controllers;
 import com.pfinance.pfinancefullstack.models.Group;
 import com.pfinance.pfinancefullstack.repositories.GroupRepository;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,5 +22,11 @@ public class GroupController {
     @GetMapping("/groups")
     public List<Group> getAllGroups() {
         return groupDao.findAll();
+    }
+
+    @GetMapping("/group/{id}")
+    public Group getGroupById(@PathVariable Long id) {
+        Group group = groupDao.findById(id).get();
+        return group;
     }
 }

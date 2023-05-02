@@ -33,3 +33,7 @@ build/
 .vscode/
 application.properties
 
+private.pem
+public.pem
+
+
