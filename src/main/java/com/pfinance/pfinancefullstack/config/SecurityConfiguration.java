@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 
@@ -20,8 +22,11 @@ public class SecurityConfiguration {
 
     private UserDetailsLoader usersLoader;
 
-    public SecurityConfiguration(UserDetailsLoader usersLoader) {
+    private final RsaKeyProperties rsaKeys;
+
+    public SecurityConfiguration(UserDetailsLoader usersLoader, RsaKeyProperties rsaKeys) {
         this.usersLoader = usersLoader;
+        this.rsaKeys = rsaKeys;
     }
 
     @Bean
@@ -35,8 +40,8 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
                 .csrf(csrf -> csrf.disable()) // (1)
                 .authorizeRequests( auth -> auth
                         .anyRequest().authenticated() // (2)
@@ -46,7 +51,11 @@ public class SecurityConfiguration {
                 .httpBasic(Customizer.withDefaults()) // (4)
                 .build()
         ;
-        return http.build();
+    }
+
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
     }
 
 }
