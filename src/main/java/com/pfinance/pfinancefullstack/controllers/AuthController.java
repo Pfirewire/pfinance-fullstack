@@ -46,5 +46,17 @@ public class AuthController {
         return token;
     }
 
+    @PostMapping("/login")
+    public String loginAndReturnToken(@RequestBody LoginDto loginDto) {
+        System.out.println("Inside loginAndReturnToken");
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginDto.getUsername(), loginDto.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.printf("Token requested for: %s%n", ((User) authentication.getPrincipal()).getUsername());
+        String token = tokenService.generateToken(authentication);
+        System.out.printf("Token granted: %s%n", token);
+        return token;
+    }
 
 }
