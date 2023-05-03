@@ -24,6 +24,12 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column
+    private String name;
+
+    @Column
+    private String phoneNumber;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Group> groups;
@@ -35,6 +41,14 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public User(String username, String email, String password, String name, String phoneNumber) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
     }
 
     public User (User copy) {
@@ -74,6 +88,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public List<Group> getGroups() {
