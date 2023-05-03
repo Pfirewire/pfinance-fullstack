@@ -52,9 +52,12 @@ public class SecurityConfiguration {
         return http
                 .csrf(csrf -> csrf.disable()) // (1)
                 .cors().and()
+//                .formLogin()
+//                .permitAll()
+//                .and()
                 .authorizeRequests( auth -> auth
-                        .requestMatchers("/api/**").authenticated()
-                        .requestMatchers("/", "/login", "/token").permitAll()// (2)
+                        .requestMatchers("/api/groups", "/token").authenticated()
+                        .requestMatchers("/", "/login", "/signin").permitAll()// (2)
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // (3)
