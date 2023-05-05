@@ -1,5 +1,6 @@
 package com.pfinance.pfinancefullstack.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pfinance.pfinancefullstack.models.User;
@@ -33,23 +34,29 @@ public class CreateLinkTokenService {
         HashMap<String, String> apiKeys = new HashMap<>();
         apiKeys.put("clientId", plaidToken.getPlaidClientId());
         apiKeys.put("secret", plaidToken.getPlaidDevelopmentSecret());
+        apiKeys.put("plaidVersion", "2020-09-14");
         ApiClient apiClient = new ApiClient(apiKeys);
         apiClient.setPlaidAdapter(ApiClient.Development);
+
+//        ObjectMapper mapper = new ObjectMapper();
+//        System.out.println(mapper.writeValueAsString(apiClient));
+
 
         plaidClient = apiClient.createService(PlaidApi.class);
 
         System.out.println("Plaid Client: ");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        System.out.println(gson.toJson(plaidClient));
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        System.out.println(gson.toJson(plaidClient));
 
 
         String linkToken = "";
 
         LinkTokenCreateRequestUser user = new LinkTokenCreateRequestUser()
                 .clientUserId(currentUser.getId().toString())
-                .legalName(currentUser.getName())
-                .phoneNumber(currentUser.getPhoneNumber())
-                .emailAddress(currentUser.getEmail());
+//                .legalName(currentUser.getName())
+//                .phoneNumber(currentUser.getPhoneNumber())
+//                .emailAddress(currentUser.getEmail())
+        ;
 
         DepositoryFilter types = new DepositoryFilter()
                 .accountSubtypes(Arrays.asList(DepositoryAccountSubtype.CHECKING));
@@ -65,9 +72,10 @@ public class CreateLinkTokenService {
                 .products(Arrays.asList(Products.AUTH, Products.BALANCE, Products.TRANSACTIONS))
                 .countryCodes(Arrays.asList(CountryCode.US))
                 .language("en")
-                .redirectUri("https://localhost:3000/budget")
+//                .redirectUri("https://localhost:3000/budget")
                 .linkCustomizationName("default")
-                .accountFilters(accountFilters);
+//                .accountFilters(accountFilters)
+        ;
 
         System.out.println(request);
 
