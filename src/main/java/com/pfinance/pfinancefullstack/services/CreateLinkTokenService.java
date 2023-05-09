@@ -29,20 +29,13 @@ public class CreateLinkTokenService {
 
     private PlaidApi plaidClient;
 
+    @Autowired
+    private PlaidClientService plaidClientService;
+
     public String getLinkToken(User currentUser) throws IOException {
         System.out.println("Inside getLinkToken");
-        HashMap<String, String> apiKeys = new HashMap<>();
-        apiKeys.put("clientId", plaidToken.getPlaidClientId());
-        apiKeys.put("secret", plaidToken.getPlaidDevelopmentSecret());
-        apiKeys.put("plaidVersion", "2020-09-14");
-        ApiClient apiClient = new ApiClient(apiKeys);
-        apiClient.setPlaidAdapter(ApiClient.Development);
 
-//        ObjectMapper mapper = new ObjectMapper();
-//        System.out.println(mapper.writeValueAsString(apiClient));
-
-
-        plaidClient = apiClient.createService(PlaidApi.class);
+        plaidClient = plaidClientService.createPlaidClient();
 
         System.out.println("Plaid Client: ");
 //        Gson gson = new GsonBuilder().setPrettyPrinting().create();

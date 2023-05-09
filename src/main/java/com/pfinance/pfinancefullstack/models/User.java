@@ -30,6 +30,12 @@ public class User {
     @Column
     private String phoneNumber;
 
+    @Column
+    private String accessToken;
+
+    @Column
+    private String itemId;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Group> groups;
@@ -43,12 +49,14 @@ public class User {
         this.password = password;
     }
 
-    public User(String username, String email, String password, String name, String phoneNumber) {
+    public User(String username, String email, String password, String name, String phoneNumber, String accessToken, String itemId) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.accessToken = accessToken;
+        this.itemId = itemId;
     }
 
     public User (User copy) {
@@ -104,6 +112,22 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
     public List<Group> getGroups() {
