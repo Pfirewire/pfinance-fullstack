@@ -69,7 +69,7 @@ public class CreateLinkTokenService {
                 .secret(plaidToken.getPlaidDevelopmentSecret())
                 .user(user)
                 .clientName("Pfinance")
-                .products(Arrays.asList(Products.AUTH, Products.BALANCE, Products.TRANSACTIONS))
+                .products(Arrays.asList(Products.AUTH, Products.TRANSACTIONS))
                 .countryCodes(Arrays.asList(CountryCode.US))
                 .language("en")
 //                .redirectUri("https://localhost:3000/budget")
@@ -91,7 +91,7 @@ public class CreateLinkTokenService {
         if(response.code() == 400) {
             return "400 Error";
         }
-        linkToken = response.body().toString();
+        linkToken = response.body().getLinkToken();
 
         System.out.println(linkToken);
         return linkToken;
