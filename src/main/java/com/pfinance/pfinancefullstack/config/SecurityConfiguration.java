@@ -56,8 +56,8 @@ public class SecurityConfiguration {
 //                .permitAll()
 //                .and()
                 .authorizeRequests( auth -> auth
-                        .requestMatchers("/api/groups", "/token", "/api/plaid/**").authenticated()
-                        .requestMatchers("/", "/login", "/signin").permitAll()// (2)
+                        .requestMatchers("/api/groups", "/token", "/api/plaid/**", "/user/**").authenticated()
+                        .requestMatchers("/", "/login", "/signin", "/test/**").permitAll()// (2)
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // (3)
