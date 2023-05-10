@@ -50,18 +50,27 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable()) // (1)
+                .csrf(csrf -> csrf.disable())
                 .cors().and()
-//                .formLogin()
-//                .permitAll()
-//                .and()
                 .authorizeRequests( auth -> auth
-                        .requestMatchers("/api/groups", "/token", "/api/plaid/**", "/user/**").authenticated()
-                        .requestMatchers("/", "/login", "/signin", "/test/**").permitAll()// (2)
+                        .requestMatchers(
+                                "/api/**",
+                                "/api/**/**",
+                                "api/**/**/**",
+                                "/token",
+                                "/user/**"
+                        ).authenticated()
+                        .requestMatchers(
+                                "/",
+                                "/login",
+                                "/signin",
+                                "/test/**",
+                                "/user/status"
+                        ).permitAll()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // (3)
-                .httpBasic(Customizer.withDefaults()) // (4)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(Customizer.withDefaults())
                 .build()
         ;
     }
