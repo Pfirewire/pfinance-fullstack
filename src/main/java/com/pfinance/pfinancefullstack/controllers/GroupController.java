@@ -32,16 +32,32 @@ public class GroupController {
         return groupDao.findAllByUser(user);
     }
 
-    @GetMapping("/group/{id}")
-    public Group getGroupById(@PathVariable Long id) {
-        return groupDao.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Group with id %d was not found", id)));
-    }
-
-    @PostMapping("/group/add")
+    @PostMapping("/groups")
     public Group addGroup(@RequestBody Group group) {
         User user = userDao.findByUsername(UserUtils.currentUsername());
         group.setUser(user);
         groupDao.save(group);
         return group;
     }
+
+    @GetMapping("/group/{id}")
+    public Group getGroupById(@PathVariable Long id) {
+        return groupDao.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Group with id %d was not found", id)));
+    }
+
+    @PutMapping("/group/{id}")
+    public Group updateGroupById(@PathVariable Long id, @RequestBody Group updatedGroup) {
+        Group group = groupDao.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Group with id %d was not found", id)));
+        group.setName(updatedGroup.getName());
+        groupDao.save(group);
+        return group;
+    }
+
+    @DeleteMapping("/group/{id}")
+    public Group deleteGroupById(@PathVariable Long id) {
+        Group group = groupDao.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Group with id %d was not found", id)));
+        groupDao.delete(group);
+        return group;
+    }
+
 }
