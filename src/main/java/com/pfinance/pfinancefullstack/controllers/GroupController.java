@@ -4,6 +4,7 @@ import com.pfinance.pfinancefullstack.models.Group;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.GroupRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
+import com.pfinance.pfinancefullstack.utils.UserUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import retrofit2.http.Path;
 import java.util.List;
 
 @RestController
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin
 @RequestMapping("/api")
 public class GroupController {
 
@@ -24,25 +25,21 @@ public class GroupController {
         this.userDao = userDao;
     }
 
-    @GetMapping("/groups/")
-    public List<Group> getAllGroups() {
-        User user = userDao.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+    @GetMapping("/groups")
+    public List<Group> getAllCurrentUserGroups() {
         System.out.println("Inside getAllGroups");
+        User user = userDao.findByUsername(UserUtils.currentUsername());
         return groupDao.findAllByUser(user);
     }
 
     @GetMapping("/group/{id}")
     public Group getGroupById(@PathVariable Long id) {
-        Group group = groupDao.findById(id)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(String.format("Group with id %d was not found", id))
-                );
-        return group;
+        return groupDao.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Group with id %d was not found", id)));
     }
 
     @PostMapping("/group/add")
     public Group addGroup(@RequestBody Group group) {
-        User user = userDao.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        User user = userDao.findByUsername(UserUtils.currentUsername());
         group.setUser(user);
         groupDao.save(group);
         return group;

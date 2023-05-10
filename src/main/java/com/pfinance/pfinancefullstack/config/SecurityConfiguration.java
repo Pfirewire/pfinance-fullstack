@@ -55,8 +55,8 @@ public class SecurityConfiguration {
                 .authorizeRequests( auth -> auth
                         .requestMatchers(
                                 "/api/**",
-                                "/api/**/**",
-                                "api/**/**/**",
+                                "/api/group/**",
+                                "/api/plaid/**",
                                 "/token",
                                 "/user/**"
                         ).authenticated()
