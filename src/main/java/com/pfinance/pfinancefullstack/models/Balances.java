@@ -4,23 +4,23 @@ public class Balances {
 
     private double available;
     private double current;
-    private String iso_currency_code;
+    private String isoCurrencyCode;
     private double limit;
-    private String unofficial_currency_code;
+    private String unofficialCurrencyCode;
 
     // TODO: Change to Date object later!
-    private String last_updated_datetime;
+    private String lastUpdatedDatetime;
 
     public Balances() {
     }
 
-    public Balances(double available, double current, String iso_currency_code, double limit, String unofficial_currency_code, String last_updated_datetime) {
+    public Balances(double available, double current, String isoCurrencyCode, double limit, String unofficialCurrencyCode, String lastUpdatedDatetime) {
         this.available = available;
         this.current = current;
-        this.iso_currency_code = iso_currency_code;
+        this.isoCurrencyCode = isoCurrencyCode;
         this.limit = limit;
-        this.unofficial_currency_code = unofficial_currency_code;
-        this.last_updated_datetime = last_updated_datetime;
+        this.unofficialCurrencyCode = unofficialCurrencyCode;
+        this.lastUpdatedDatetime = lastUpdatedDatetime;
     }
 
     public double getAvailable() {
@@ -39,12 +39,12 @@ public class Balances {
         this.current = current;
     }
 
-    public String getIso_currency_code() {
-        return iso_currency_code;
+    public String getIsoCurrencyCode() {
+        return isoCurrencyCode;
     }
 
-    public void setIso_currency_code(String iso_currency_code) {
-        this.iso_currency_code = iso_currency_code;
+    public void setIsoCurrencyCode(String isoCurrencyCode) {
+        this.isoCurrencyCode = isoCurrencyCode;
     }
 
     public double getLimit() {
@@ -55,19 +55,19 @@ public class Balances {
         this.limit = limit;
     }
 
-    public String getUnofficial_currency_code() {
-        return unofficial_currency_code;
+    public String getUnofficialCurrencyCode() {
+        return unofficialCurrencyCode;
     }
 
-    public void setUnofficial_currency_code(String unofficial_currency_code) {
-        this.unofficial_currency_code = unofficial_currency_code;
+    public void setUnofficialCurrencyCode(String unofficialCurrencyCode) {
+        this.unofficialCurrencyCode = unofficialCurrencyCode;
     }
 
-    public String getLast_updated_datetime() {
-        return last_updated_datetime;
+    public String getLastUpdatedDatetime() {
+        return lastUpdatedDatetime;
     }
 
-    public void setLast_updated_datetime(String last_updated_datetime) {
-        this.last_updated_datetime = last_updated_datetime;
+    public void setLastUpdatedDatetime(String lastUpdatedDatetime) {
+        this.lastUpdatedDatetime = lastUpdatedDatetime;
     }
 }
