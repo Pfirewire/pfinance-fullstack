@@ -34,8 +34,9 @@ public class BalanceController {
         this.userDao = userDao;
     }
 
-    @GetMapping("/budget/get")
+    @GetMapping("/balance/get")
     public void testGetBudget() throws IOException {
+        System.out.println("Inside testGetBudget");
         ObjectMapper mapper = new ObjectMapper();
         User user = userDao.findByUsername(UserUtils.currentUsername());
         final String accessToken = user.getAccessToken();
