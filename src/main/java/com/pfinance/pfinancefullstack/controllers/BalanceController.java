@@ -1,10 +1,13 @@
 package com.pfinance.pfinancefullstack.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pfinance.pfinancefullstack.models.Account;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.services.PlaidClientService;
 import com.pfinance.pfinancefullstack.utils.UserUtils;
+import com.plaid.client.model.AccountBase;
 import com.plaid.client.model.AccountsBalanceGetRequest;
 import com.plaid.client.model.AccountsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ public class BalanceController {
 
     @GetMapping("/budget/get")
     public void testGetBudget() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
         User user = userDao.findByUsername(UserUtils.currentUsername());
         final String accessToken = user.getAccessToken();
         AccountsBalanceGetRequest request = new AccountsBalanceGetRequest().accessToken(accessToken);
@@ -42,7 +46,8 @@ public class BalanceController {
                 .accountsBalanceGet(request)
 
                 .execute();
-
-        List<Account> accounts = response.body().getAccounts();
+        assert response.body() != null;
+        List<AccountBase> accounts = response.body().getAccounts();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(accounts));
     }
 }
