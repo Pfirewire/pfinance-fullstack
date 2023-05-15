@@ -34,7 +34,6 @@ public class Bucket {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
