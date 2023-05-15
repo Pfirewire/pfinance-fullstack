@@ -30,9 +30,11 @@ public class User {
     @Column
     private String phoneNumber;
 
+    @JsonIgnore
     @Column
     private String accessToken;
 
+    @JsonIgnore
     @Column
     private String itemId;
 
