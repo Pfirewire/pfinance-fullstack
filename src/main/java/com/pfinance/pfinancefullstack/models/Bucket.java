@@ -34,6 +34,11 @@ public class Bucket {
     @JoinColumn(name = "group_id")
     private Group group;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(mappedBy = "bucket")
     private List<Expense> expenses;
 
@@ -46,6 +51,10 @@ public class Bucket {
         this.recurringAmount = recurringAmount;
         this.maximumAmount = maximumAmount;
         this.recurringInterval = recurringInterval;
+    }
+
+    public Bucket(Long id) {
+        this.id = id;
     }
 
     public Long getId() {
@@ -94,6 +103,14 @@ public class Bucket {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<Expense> getExpenses() {

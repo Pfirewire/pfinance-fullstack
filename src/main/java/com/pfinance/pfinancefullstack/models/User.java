@@ -40,6 +40,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Group> groups;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Bucket> buckets;
+
     public User() {
     }
 
@@ -136,5 +140,13 @@ public class User {
 
     public void setGroups(List<Group> groups) {
         this.groups = groups;
+    }
+
+    public List<Bucket> getBuckets() {
+        return buckets;
+    }
+
+    public void setBuckets(List<Bucket> buckets) {
+        this.buckets = buckets;
     }
 }
