@@ -1,5 +1,6 @@
 package com.pfinance.pfinancefullstack.repositories;
 
+import com.pfinance.pfinancefullstack.models.Bucket;
 import com.pfinance.pfinancefullstack.models.Group;
 import com.pfinance.pfinancefullstack.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ import java.util.List;
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
     List<Group> findAllByUser(User user);
+
+    Group findByBucket(Bucket bucket);
 }

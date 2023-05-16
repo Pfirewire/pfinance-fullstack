@@ -74,4 +74,23 @@ public class BucketController {
         bucketDao.save(updatedBucket);
         return updatedBucket;
     }
+
+    @DeleteMapping("/bucket/{id}")
+    public Bucket deleteBucketById(@PathVariable Long id) throws JsonProcessingException {
+        User user = UserUtils.currentUser(userDao);
+        if(!bucketDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        Bucket bucket = bucketDao.findById(id).get();
+        if(!user.getBuckets().contains(bucket)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        Group group = groupDao.findByBucket(bucket);
+        List<Bucket> groupBuckets = group.getBuckets();
+        groupBuckets.remove(bucket);
+        group.setBuckets(groupBuckets);
+        groupDao.save(group);
+        List<Bucket> userBuckets = user.getBuckets();
+        userBuckets.remove(bucket);
+        user.setBuckets(userBuckets);
+        userDao.save(user);
+        bucketDao.delete(bucket);
+        return bucket;
+    }
 }
