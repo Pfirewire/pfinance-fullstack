@@ -13,5 +13,5 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     List<Group> findAllByUser(User user);
 
-    Group findByBucket(Bucket bucket);
+    Group findByBuckets(Bucket bucket);
 }

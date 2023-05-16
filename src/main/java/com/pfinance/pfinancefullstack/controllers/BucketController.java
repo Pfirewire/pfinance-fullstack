@@ -52,6 +52,7 @@ public class BucketController {
         Group group = groupDao.findById(id).get();
         if(!user.getGroups().contains(group)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         bucketDao.save(bucket);
+        return bucket;
     }
 
     @GetMapping("/bucket/{id}")
@@ -81,7 +82,7 @@ public class BucketController {
         if(!bucketDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         Bucket bucket = bucketDao.findById(id).get();
         if(!user.getBuckets().contains(bucket)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        Group group = groupDao.findByBucket(bucket);
+        Group group = groupDao.findByBuckets(bucket);
         List<Bucket> groupBuckets = group.getBuckets();
         groupBuckets.remove(bucket);
         group.setBuckets(groupBuckets);
