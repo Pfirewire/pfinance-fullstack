@@ -28,13 +28,13 @@ public class GroupController {
     @GetMapping("/groups")
     public List<Group> getAllCurrentUserGroups() {
         System.out.println("Inside getAllGroups");
-        User user = userDao.findByUsername(UserUtils.currentUsername());
+        User user = UserUtils.currentUser(userDao);
         return groupDao.findAllByUser(user);
     }
 
     @PostMapping("/groups")
     public Group addGroup(@RequestBody Group group) {
-        User user = userDao.findByUsername(UserUtils.currentUsername());
+        User user = UserUtils.currentUser(userDao);
         group.setUser(user);
         groupDao.save(group);
         return group;

@@ -36,7 +36,7 @@ public class BucketController {
 
     @GetMapping("/buckets/{id}")
     public List<Bucket> getBucketsByGroupId(@PathVariable Long id) throws JsonProcessingException {
-        User user = userDao.findByUsername(UserUtils.currentUsername());
+        User user = UserUtils.currentUser(userDao);
         if(!groupDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         Group group = groupDao.findById(id).get();
         if(!user.getGroups().contains(group)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -45,9 +45,18 @@ public class BucketController {
         return buckets;
     }
 
+    @PostMapping("/buckets/{id}")
+    public Bucket addBucketByGroupId(@PathVariable Long id, @RequestBody Bucket bucket) throws JsonProcessingException {
+        User user = UserUtils.currentUser(userDao);
+        if(!groupDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        Group group = groupDao.findById(id).get();
+        if(!user.getGroups().contains(group)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        bucketDao.save(bucket);
+    }
+
     @GetMapping("/bucket/{id}")
     public Bucket getBucketById(@PathVariable Long id) throws JsonProcessingException {
-        User user = userDao.findByUsername(UserUtils.currentUsername());
+        User user = UserUtils.currentUser(userDao);
         if(!bucketDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         Bucket bucket = bucketDao.findById(id).get();
         if(!user.getBuckets().contains(bucket)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

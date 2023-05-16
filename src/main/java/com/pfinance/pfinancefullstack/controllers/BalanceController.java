@@ -38,7 +38,7 @@ public class BalanceController {
     public void testGetBudget() throws IOException {
         System.out.println("Inside testGetBudget");
         ObjectMapper mapper = new ObjectMapper();
-        User user = userDao.findByUsername(UserUtils.currentUsername());
+        User user = UserUtils.currentUser(userDao);
         final String accessToken = user.getAccessToken();
         AccountsBalanceGetRequest request = new AccountsBalanceGetRequest().accessToken(accessToken);
 
