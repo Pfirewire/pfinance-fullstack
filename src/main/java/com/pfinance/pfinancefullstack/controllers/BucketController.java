@@ -63,4 +63,15 @@ public class BucketController {
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bucket));
         return bucket;
     }
+
+    @PutMapping("/bucket/{id}")
+    public Bucket updateBucketById(@PathVariable Long id, @RequestBody Bucket updatedBucket) throws JsonProcessingException {
+        User user = UserUtils.currentUser(userDao);
+        if(!bucketDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        Bucket bucket = bucketDao.findById(id).get();
+        if(!user.getBuckets().contains(bucket)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        updatedBucket.setId(bucket.getId());
+        bucketDao.save(updatedBucket);
+        return updatedBucket;
+    }
 }
