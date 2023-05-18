@@ -51,6 +51,8 @@ public class BucketController {
         if(!groupDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         Group group = groupDao.findById(id).get();
         if(!user.getGroups().contains(group)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        bucket.setUser(user);
+        bucket.setGroup(group);
         bucketDao.save(bucket);
         return bucket;
     }
