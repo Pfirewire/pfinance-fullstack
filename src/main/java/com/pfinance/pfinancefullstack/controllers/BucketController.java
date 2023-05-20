@@ -74,6 +74,7 @@ public class BucketController {
         Bucket bucket = bucketDao.findById(id).get();
         if(!user.getBuckets().contains(bucket)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         updatedBucket.setId(bucket.getId());
+        updatedBucket.setUser(user);
         bucketDao.save(updatedBucket);
         return updatedBucket;
     }
