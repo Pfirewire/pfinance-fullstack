@@ -21,6 +21,9 @@ public class Bucket {
     private String name;
 
     @Column(nullable = false)
+    private double currentAmount;
+
+    @Column(nullable = false)
     private double recurringAmount;
 
     @Column(nullable = false)
@@ -43,6 +46,13 @@ public class Bucket {
 
     public Bucket() {
 
+    }
+
+    public Bucket(String name, double recurringAmount, double maximumAmount) {
+        this.name = name;
+        this.recurringAmount = recurringAmount;
+        this.maximumAmount = maximumAmount;
+        this.currentAmount = 0;
     }
 
     public Bucket(String name, double recurringAmount, double maximumAmount, RecurringInterval recurringInterval) {
@@ -70,6 +80,14 @@ public class Bucket {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getCurrentAmount() {
+        return currentAmount;
+    }
+
+    public void setCurrentAmount(double currentAmount) {
+        this.currentAmount = currentAmount;
     }
 
     public double getRecurringAmount() {
