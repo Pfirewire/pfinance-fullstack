@@ -60,15 +60,15 @@ public class SecurityConfiguration {
                                 "/api/balance/**",
                                 "/api/buckets/**",
                                 "/api/bucket/**",
-                                "/token",
-                                "/user/**"
+                                "/token"
                         ).authenticated()
                         .requestMatchers(
                                 "/",
                                 "/login",
                                 "/signin",
                                 "/test/**",
-                                "/user/status"
+                                "/user/status",
+                                "/user/register"
                         ).permitAll()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
