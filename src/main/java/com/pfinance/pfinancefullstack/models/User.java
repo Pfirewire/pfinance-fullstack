@@ -14,13 +14,11 @@ public class User {
     private Long id;
 
     @Column(nullable = false, length = 50, unique = true)
-    private  String username;
+    private String username;
 
-    @JsonIgnore
     @Column(nullable = false, length = 75, unique = true)
     private String email;
 
-    @JsonIgnore
     @Column(nullable = false)
     private String password;
 

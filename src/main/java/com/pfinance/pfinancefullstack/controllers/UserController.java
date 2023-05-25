@@ -1,5 +1,7 @@
 package com.pfinance.pfinancefullstack.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pfinance.pfinancefullstack.dtos.LoginDto;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.models.UserStatus;
@@ -12,6 +14,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/user")
@@ -30,7 +35,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody User user, HttpServletRequest req, HttpServletResponse res) {
+    public String registerUser(@RequestBody User user, HttpServletRequest req, HttpServletResponse res) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(user));
+
         String plainPassword = user.getPassword();
         // Hashing password
         String hash = passwordEncoder.encode(user.getPassword());
