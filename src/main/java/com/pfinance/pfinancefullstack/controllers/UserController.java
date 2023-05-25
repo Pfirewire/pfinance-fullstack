@@ -1,12 +1,12 @@
 package com.pfinance.pfinancefullstack.controllers;
 
+import com.pfinance.pfinancefullstack.dtos.LoginDto;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.models.UserStatus;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
-import jakarta.servlet.ServletException;
+import com.pfinance.pfinancefullstack.services.LoginUserService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,25 +20,25 @@ public class UserController {
 
     private final UserRepository userDao;
     private final PasswordEncoder passwordEncoder;
+    private final LoginUserService loginUserService;
 
 
-    public UserController(UserRepository userDao, PasswordEncoder passwordEncoder) {
+    public UserController(UserRepository userDao, PasswordEncoder passwordEncoder, LoginUserService loginUserService) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
+        this.loginUserService = loginUserService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user, HttpServletRequest httpServletRequest) {
+    public String registerUser(@RequestBody User user, HttpServletRequest req, HttpServletResponse res) {
         String plainPassword = user.getPassword();
         // Hashing password
         String hash = passwordEncoder.encode(user.getPassword());
         // Setting user password to the hash and saving user to table
         user.setPassword(hash);
         userDao.save(user);
-        if(authWithHttpServletRequest(httpServletRequest, user.getUsername(), plainPassword)) {
-            return new ResponseEntity<>("User signed-in successfully!", HttpStatus.OK);
-        }
-        return new ResponseEntity<>("User registration unsuccessful.", HttpStatus.BAD_REQUEST);
+        LoginDto loginDto = new LoginDto(user.getUsername(), plainPassword);
+        return loginUserService.logUserInAndReturnJwtToken(loginDto, req, res);
     }
 
     @GetMapping("/status")
@@ -53,15 +53,5 @@ public class UserController {
             if(user.getAccessToken() != null) tokenExists = true;
         }
         return new UserStatus(userExists, tokenExists);
-    }
-
-    private boolean authWithHttpServletRequest(HttpServletRequest request, String username, String password) {
-        try {
-            request.login(username, password);
-            return true;
-        } catch (ServletException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 }
