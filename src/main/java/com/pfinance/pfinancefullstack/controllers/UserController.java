@@ -1,6 +1,5 @@
 package com.pfinance.pfinancefullstack.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pfinance.pfinancefullstack.dtos.LoginDto;
 import com.pfinance.pfinancefullstack.models.User;
