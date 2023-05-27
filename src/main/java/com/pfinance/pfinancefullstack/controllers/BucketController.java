@@ -8,6 +8,7 @@ import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.BucketRepository;
 import com.pfinance.pfinancefullstack.repositories.GroupRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
+import com.pfinance.pfinancefullstack.utils.CalculateGroup;
 import com.pfinance.pfinancefullstack.utils.UserUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -54,6 +55,7 @@ public class BucketController {
         bucket.setUser(user);
         bucket.setGroup(group);
         bucketDao.save(bucket);
+        CalculateGroup.addAmount(group, bucket, groupDao);
         return bucket;
     }
 
@@ -77,6 +79,7 @@ public class BucketController {
         updatedBucket.setGroup(bucket.getGroup());
         updatedBucket.setUser(user);
         bucketDao.save(updatedBucket);
+        CalculateGroup.allAmounts(bucket.getGroup(), groupDao);
         return updatedBucket;
     }
 
@@ -96,6 +99,7 @@ public class BucketController {
         user.setBuckets(userBuckets);
         userDao.save(user);
         bucketDao.delete(bucket);
+        CalculateGroup.allAmounts(group, groupDao);
         return bucket;
     }
 }

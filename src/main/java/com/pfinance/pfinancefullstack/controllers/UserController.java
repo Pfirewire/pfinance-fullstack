@@ -1,15 +1,21 @@
 package com.pfinance.pfinancefullstack.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pfinance.pfinancefullstack.dtos.LoginDto;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.models.UserStatus;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
+import com.pfinance.pfinancefullstack.services.LoginUserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/user")
@@ -17,9 +23,29 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserRepository userDao;
+    private final PasswordEncoder passwordEncoder;
+    private final LoginUserService loginUserService;
 
-    public UserController(UserRepository userDao) {
+
+    public UserController(UserRepository userDao, PasswordEncoder passwordEncoder, LoginUserService loginUserService) {
         this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
+        this.loginUserService = loginUserService;
+    }
+
+    @PostMapping("/register")
+    public String registerUser(@RequestBody User user, HttpServletRequest req, HttpServletResponse res) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(user));
+
+        String plainPassword = user.getPassword();
+        // Hashing password
+        String hash = passwordEncoder.encode(user.getPassword());
+        // Setting user password to the hash and saving user to table
+        user.setPassword(hash);
+        userDao.save(user);
+        LoginDto loginDto = new LoginDto(user.getUsername(), plainPassword);
+        return loginUserService.logUserInAndReturnJwtToken(loginDto, req, res);
     }
 
     @GetMapping("/status")
