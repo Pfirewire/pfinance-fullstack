@@ -60,6 +60,7 @@ public class SecurityConfiguration {
                                 "/api/balance/**",
                                 "/api/buckets/**",
                                 "/api/bucket/**",
+                                "/api/transactions",
                                 "/token"
                         ).authenticated()
                         .requestMatchers(

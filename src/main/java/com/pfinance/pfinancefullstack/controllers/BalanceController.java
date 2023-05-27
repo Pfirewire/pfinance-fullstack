@@ -34,7 +34,7 @@ public class BalanceController {
         this.userDao = userDao;
     }
 
-    @GetMapping("/balance/get")
+    @GetMapping("/balance")
     public void testGetBudget() throws IOException {
         System.out.println("Inside testGetBudget");
         ObjectMapper mapper = new ObjectMapper();
