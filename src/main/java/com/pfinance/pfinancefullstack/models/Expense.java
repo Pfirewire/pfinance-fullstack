@@ -27,6 +27,11 @@ public class Expense {
     @JoinColumn(name = "bucket_id")
     private Bucket bucket;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Expense() {
 
     }
@@ -67,5 +72,21 @@ public class Expense {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public Bucket getBucket() {
+        return bucket;
+    }
+
+    public void setBucket(Bucket bucket) {
+        this.bucket = bucket;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

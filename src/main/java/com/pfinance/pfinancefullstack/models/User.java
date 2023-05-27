@@ -46,6 +46,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Bucket> buckets;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Expense> expenses;
+
     public User() {
     }
 
@@ -150,5 +154,13 @@ public class User {
 
     public void setBuckets(List<Bucket> buckets) {
         this.buckets = buckets;
+    }
+
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<Expense> expenses) {
+        this.expenses = expenses;
     }
 }
