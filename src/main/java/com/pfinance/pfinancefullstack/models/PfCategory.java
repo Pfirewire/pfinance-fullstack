@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "`groups`")
-public class Group {
+public class PfCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,12 +29,12 @@ public class Group {
     private User user;
 
     @OneToMany(mappedBy = "group")
-    private List<Bucket> buckets;
+    private List<PfBucket> pfBuckets;
 
-    public Group() {
+    public PfCategory() {
     }
 
-    public Group(String name) {
+    public PfCategory(String name) {
         this.name = name;
 //        this.totalCurrentAmount = 0;
 //        this.totalRecurringAmount = 0;
@@ -89,11 +89,11 @@ public class Group {
         this.user = user;
     }
 
-    public List<Bucket> getBuckets() {
-        return buckets;
+    public List<PfBucket> getBuckets() {
+        return pfBuckets;
     }
 
-    public void setBuckets(List<Bucket> buckets) {
-        this.buckets = buckets;
+    public void setBuckets(List<PfBucket> pfBuckets) {
+        this.pfBuckets = pfBuckets;
     }
 }

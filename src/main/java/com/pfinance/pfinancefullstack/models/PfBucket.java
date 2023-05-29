@@ -3,11 +3,9 @@ package com.pfinance.pfinancefullstack.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "buckets")
-public class Bucket {
+public class PfBucket {
 
     public enum RecurringInterval {
         DAILY, WEEKLY, BIWEEKLY, BIMONTHLY, MONTHLY, QUARTERLY, YEARLY
@@ -35,34 +33,31 @@ public class Bucket {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "group_id")
-    private Group group;
+    private PfCategory pfCategory;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "bucket")
-    private List<Expense> expenses;
-
-    public Bucket() {
+    public PfBucket() {
 
     }
 
-    public Bucket(String name, double recurringAmount, double maximumAmount) {
+    public PfBucket(String name, double recurringAmount, double maximumAmount) {
         this.name = name;
         this.recurringAmount = recurringAmount;
         this.maximumAmount = maximumAmount;
         this.currentAmount = 0;
     }
 
-    public Bucket(String name, double recurringAmount, double maximumAmount, RecurringInterval recurringInterval) {
+    public PfBucket(String name, double recurringAmount, double maximumAmount, RecurringInterval recurringInterval) {
         this.name = name;
         this.recurringAmount = recurringAmount;
         this.maximumAmount = maximumAmount;
         this.recurringInterval = recurringInterval;
     }
 
-    public Bucket(Long id) {
+    public PfBucket(Long id) {
         this.id = id;
     }
 
@@ -114,12 +109,12 @@ public class Bucket {
         this.recurringInterval = recurringInterval;
     }
 
-    public Group getGroup() {
-        return group;
+    public PfCategory getGroup() {
+        return pfCategory;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setGroup(PfCategory pfCategory) {
+        this.pfCategory = pfCategory;
     }
 
     public User getUser() {
@@ -130,11 +125,4 @@ public class Bucket {
         this.user = user;
     }
 
-    public List<Expense> getExpenses() {
-        return expenses;
-    }
-
-    public void setExpenses(List<Expense> expenses) {
-        this.expenses = expenses;
-    }
 }

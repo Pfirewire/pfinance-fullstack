@@ -38,15 +38,11 @@ public class User {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Group> groups;
+    private List<PfCategory> pfCategories;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Bucket> buckets;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    private List<Expense> expenses;
+    private List<PfBucket> pfBuckets;
 
     public User() {
     }
@@ -138,27 +134,20 @@ public class User {
         this.itemId = itemId;
     }
 
-    public List<Group> getGroups() {
-        return groups;
+    public List<PfCategory> getGroups() {
+        return pfCategories;
     }
 
-    public void setGroups(List<Group> groups) {
-        this.groups = groups;
+    public void setGroups(List<PfCategory> pfCategories) {
+        this.pfCategories = pfCategories;
     }
 
-    public List<Bucket> getBuckets() {
-        return buckets;
+    public List<PfBucket> getBuckets() {
+        return pfBuckets;
     }
 
-    public void setBuckets(List<Bucket> buckets) {
-        this.buckets = buckets;
+    public void setBuckets(List<PfBucket> pfBuckets) {
+        this.pfBuckets = pfBuckets;
     }
 
-    public List<Expense> getExpenses() {
-        return expenses;
-    }
-
-    public void setExpenses(List<Expense> expenses) {
-        this.expenses = expenses;
-    }
 }

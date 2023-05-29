@@ -1,8 +1,6 @@
 package com.pfinance.pfinancefullstack.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pfinance.pfinancefullstack.models.Expense;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.services.JsonPrint;
@@ -10,7 +8,6 @@ import com.pfinance.pfinancefullstack.services.PlaidClientService;
 import com.pfinance.pfinancefullstack.utils.UserUtils;
 import com.plaid.client.model.Transaction;
 import com.plaid.client.model.TransactionsGetRequest;
-import com.plaid.client.model.TransactionsGetRequestOptions;
 import com.plaid.client.model.TransactionsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,11 +18,8 @@ import retrofit2.Response;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -45,7 +39,7 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions")
-    public List<Transaction> getUserExpenses() throws ParseException, IOException {
+    public List<Transaction> getUserTransactions() throws ParseException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         System.out.println("Inside getUserExpenses");
         User user = UserUtils.currentUser(userDao);
@@ -95,9 +89,6 @@ public class TransactionController {
 //            transactions.addAll(response.body().getTransactions());
 //        }
 
-//        List<Expense> userExpenses = new ArrayList<>();
-//
-//        return userExpenses;
         return transactions;
     }
 }

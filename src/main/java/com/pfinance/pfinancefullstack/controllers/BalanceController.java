@@ -1,8 +1,6 @@
 package com.pfinance.pfinancefullstack.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pfinance.pfinancefullstack.models.Account;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.services.PlaidClientService;
