@@ -1,5 +1,6 @@
 package com.pfinance.pfinancefullstack.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +17,7 @@ public class PlaidLink {
     @Column(nullable = false)
     private String plaidItemId;
 
+    @JsonIgnore
     @ManyToOne
     private User user;
 

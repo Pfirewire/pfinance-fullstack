@@ -1,6 +1,9 @@
 package com.pfinance.pfinancefullstack.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "pf_budgets")
@@ -16,9 +19,13 @@ public class PfBudget {
     @Column(nullable = false)
     private String year;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "pfBudget")
+    private List<PfCategory> pfCategories;
 
     public PfBudget() {
     }
@@ -59,5 +66,13 @@ public class PfBudget {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<PfCategory> getPfCategories() {
+        return pfCategories;
+    }
+
+    public void setPfCategories(List<PfCategory> pfCategories) {
+        this.pfCategories = pfCategories;
     }
 }

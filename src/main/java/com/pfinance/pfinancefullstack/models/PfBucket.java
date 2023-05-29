@@ -50,6 +50,9 @@ public class PfBucket {
     @OneToMany(mappedBy = "pfBucket")
     private List<TransactionAutoAssign> transactionAutoAssigns;
 
+    @OneToMany(mappedBy = "pfBucket")
+    private List<PfTransaction> pfTransactions;
+
     public PfBucket() {
     }
 
@@ -142,5 +145,13 @@ public class PfBucket {
 
     public void setTransactionAutoAssigns(List<TransactionAutoAssign> transactionAutoAssigns) {
         this.transactionAutoAssigns = transactionAutoAssigns;
+    }
+
+    public List<PfTransaction> getPfTransactions() {
+        return pfTransactions;
+    }
+
+    public void setPfTransactions(List<PfTransaction> pfTransactions) {
+        this.pfTransactions = pfTransactions;
     }
 }

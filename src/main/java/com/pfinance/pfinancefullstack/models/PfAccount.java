@@ -1,5 +1,6 @@
 package com.pfinance.pfinancefullstack.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -39,6 +40,7 @@ public class PfAccount {
     @Column(length = 30)
     private String subtype;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -1,5 +1,6 @@
 package com.pfinance.pfinancefullstack.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,7 @@ public class TransactionAutoAssign {
     @Column(nullable = false)
     private String transactionName;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "pf_bucket_id")
     private PfBucket pfBucket;

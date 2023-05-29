@@ -1,5 +1,6 @@
 package com.pfinance.pfinancefullstack.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,8 +20,9 @@ public class PfCategory {
     private double totalAssignedAmount;
 
     @Column
-    private double totalAvalableAmount;
+    private double totalAvailableAmount;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "pf_budget_id")
     private PfBudget pfBudget;
@@ -31,10 +33,10 @@ public class PfCategory {
     public PfCategory() {
     }
 
-    public PfCategory(String name, double totalAssignedAmount, double totalAvalableAmount, PfBudget pfBudget) {
+    public PfCategory(String name, double totalAssignedAmount, double totalAvailableAmount, PfBudget pfBudget) {
         this.name = name;
         this.totalAssignedAmount = totalAssignedAmount;
-        this.totalAvalableAmount = totalAvalableAmount;
+        this.totalAvailableAmount = totalAvailableAmount;
         this.pfBudget = pfBudget;
     }
 
@@ -62,12 +64,12 @@ public class PfCategory {
         this.totalAssignedAmount = totalAssignedAmount;
     }
 
-    public double getTotalAvalableAmount() {
-        return totalAvalableAmount;
+    public double getTotalAvailableAmount() {
+        return totalAvailableAmount;
     }
 
-    public void setTotalAvalableAmount(double totalAvalableAmount) {
-        this.totalAvalableAmount = totalAvalableAmount;
+    public void setTotalAvailableAmount(double totalAvailableAmount) {
+        this.totalAvailableAmount = totalAvailableAmount;
     }
 
     public PfBudget getPfBudget() {

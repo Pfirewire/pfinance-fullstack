@@ -1,5 +1,6 @@
 package com.pfinance.pfinancefullstack.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class PlaidCategory {
     @Column(nullable = false)
     private String name;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "plaidCategories")
     private List<PfTransaction> pfTransactions;
 

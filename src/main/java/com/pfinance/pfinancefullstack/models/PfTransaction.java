@@ -1,5 +1,6 @@
 package com.pfinance.pfinancefullstack.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -16,12 +17,15 @@ public class PfTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String plaidAccountId;
 
+    @JsonIgnore
     @Column
     private String plaidPendingTransactionId;
 
+    @JsonIgnore
     @Column
     private String plaidTransactionId;
 
@@ -49,6 +53,7 @@ public class PfTransaction {
     @Enumerated(EnumType.ORDINAL)
     private ChannelType channelType;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "pf_account_id")
     private PfAccount pfAccount;
@@ -56,6 +61,11 @@ public class PfTransaction {
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "pf_bucket_id")
+    private PfBucket pfBucket;
 
     @ManyToMany
     @JoinTable(
@@ -208,6 +218,14 @@ public class PfTransaction {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public PfBucket getPfBucket() {
+        return pfBucket;
+    }
+
+    public void setPfBucket(PfBucket pfBucket) {
+        this.pfBucket = pfBucket;
     }
 
     public List<PlaidCategory> getPlaidCategories() {

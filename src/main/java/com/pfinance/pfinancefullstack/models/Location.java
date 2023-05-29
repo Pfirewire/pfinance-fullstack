@@ -1,5 +1,6 @@
 package com.pfinance.pfinancefullstack.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class Location {
     @Column
     private String state;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "location")
     private List<PfTransaction> pfTransactions;
 
