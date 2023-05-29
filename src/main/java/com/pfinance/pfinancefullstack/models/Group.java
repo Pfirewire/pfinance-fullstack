@@ -36,9 +36,9 @@ public class Group {
 
     public Group(String name) {
         this.name = name;
-        this.totalCurrentAmount = 0;
-        this.totalRecurringAmount = 0;
-        this.totalMaximumAmount = 0;
+//        this.totalCurrentAmount = 0;
+//        this.totalRecurringAmount = 0;
+//        this.totalMaximumAmount = 0;
     }
 
     public Long getId() {

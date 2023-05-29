@@ -14,6 +14,9 @@ public class Expense {
     private Long id;
 
     @Column(nullable = false)
+    private String transactionId;
+
+    @Column(nullable = false)
     private Date date;
 
     @Column(nullable = false)
@@ -36,7 +39,8 @@ public class Expense {
 
     }
 
-    public Expense(Date date, double amount, String notes) {
+    public Expense(String transactionId, Date date, double amount, String notes) {
+        this.transactionId = transactionId;
         this.date = date;
         this.amount = amount;
         this.notes = notes;
@@ -48,6 +52,14 @@ public class Expense {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
     public Date getDate() {
