@@ -22,27 +22,18 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column
-    private String name;
-
-    @Column
-    private String phoneNumber;
-
     @JsonIgnore
-    @Column
-    private String accessToken;
-
-    @JsonIgnore
-    @Column
-    private String itemId;
+    @OneToMany(mappedBy = "user")
+    private List<PlaidLink> plaidLinks;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<PfCategory> pfCategories;
+    private List<PfBudget> pfBudgets;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<PfBucket> pfBuckets;
+    private List<PfAccount> pfAccounts;
+
 
     public User() {
     }
@@ -51,16 +42,6 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
-    }
-
-    public User(String username, String email, String password, String name, String phoneNumber, String accessToken, String itemId) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.accessToken = accessToken;
-        this.itemId = itemId;
     }
 
     public User (User copy) {
@@ -102,52 +83,27 @@ public class User {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public List<PlaidLink> getPlaidLinks() {
+        return plaidLinks;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPlaidLinks(List<PlaidLink> plaidLinks) {
+        this.plaidLinks = plaidLinks;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public List<PfBudget> getPfBudgets() {
+        return pfBudgets;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPfBudgets(List<PfBudget> pfBudgets) {
+        this.pfBudgets = pfBudgets;
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public List<PfAccount> getPfAccounts() {
+        return pfAccounts;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setPfAccounts(List<PfAccount> pfAccounts) {
+        this.pfAccounts = pfAccounts;
     }
-
-    public String getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
-    }
-
-    public List<PfCategory> getGroups() {
-        return pfCategories;
-    }
-
-    public void setGroups(List<PfCategory> pfCategories) {
-        this.pfCategories = pfCategories;
-    }
-
-    public List<PfBucket> getBuckets() {
-        return pfBuckets;
-    }
-
-    public void setBuckets(List<PfBucket> pfBuckets) {
-        this.pfBuckets = pfBuckets;
-    }
-
 }

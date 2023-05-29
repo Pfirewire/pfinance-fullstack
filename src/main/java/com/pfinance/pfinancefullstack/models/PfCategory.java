@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "`groups`")
+@Table(name = "pf_categories")
 public class PfCategory {
 
     @Id
@@ -16,29 +16,26 @@ public class PfCategory {
     private String name;
 
     @Column
-    private double totalCurrentAmount;
+    private double totalAssignedAmount;
 
     @Column
-    private double totalRecurringAmount;
-
-    @Column
-    private double totalMaximumAmount;
+    private double totalAvalableAmount;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "pf_budget_id")
+    private PfBudget pfBudget;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "pfCategory")
     private List<PfBucket> pfBuckets;
 
     public PfCategory() {
     }
 
-    public PfCategory(String name) {
+    public PfCategory(String name, double totalAssignedAmount, double totalAvalableAmount, PfBudget pfBudget) {
         this.name = name;
-//        this.totalCurrentAmount = 0;
-//        this.totalRecurringAmount = 0;
-//        this.totalMaximumAmount = 0;
+        this.totalAssignedAmount = totalAssignedAmount;
+        this.totalAvalableAmount = totalAvalableAmount;
+        this.pfBudget = pfBudget;
     }
 
     public Long getId() {
@@ -57,43 +54,35 @@ public class PfCategory {
         this.name = name;
     }
 
-    public double getTotalCurrentAmount() {
-        return totalCurrentAmount;
+    public double getTotalAssignedAmount() {
+        return totalAssignedAmount;
     }
 
-    public void setTotalCurrentAmount(double totalCurrentAmount) {
-        this.totalCurrentAmount = totalCurrentAmount;
+    public void setTotalAssignedAmount(double totalAssignedAmount) {
+        this.totalAssignedAmount = totalAssignedAmount;
     }
 
-    public double getTotalRecurringAmount() {
-        return totalRecurringAmount;
+    public double getTotalAvalableAmount() {
+        return totalAvalableAmount;
     }
 
-    public void setTotalRecurringAmount(double totalRecurringAmount) {
-        this.totalRecurringAmount = totalRecurringAmount;
+    public void setTotalAvalableAmount(double totalAvalableAmount) {
+        this.totalAvalableAmount = totalAvalableAmount;
     }
 
-    public double getTotalMaximumAmount() {
-        return totalMaximumAmount;
+    public PfBudget getPfBudget() {
+        return pfBudget;
     }
 
-    public void setTotalMaximumAmount(double totalMaximumAmount) {
-        this.totalMaximumAmount = totalMaximumAmount;
+    public void setPfBudget(PfBudget pfBudget) {
+        this.pfBudget = pfBudget;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<PfBucket> getBuckets() {
+    public List<PfBucket> getPfBuckets() {
         return pfBuckets;
     }
 
-    public void setBuckets(List<PfBucket> pfBuckets) {
+    public void setPfBuckets(List<PfBucket> pfBuckets) {
         this.pfBuckets = pfBuckets;
     }
 }

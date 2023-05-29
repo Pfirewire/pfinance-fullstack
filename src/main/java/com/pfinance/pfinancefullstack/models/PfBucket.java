@@ -3,9 +3,15 @@ package com.pfinance.pfinancefullstack.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
-@Table(name = "buckets")
+@Table(name = "pf_buckets")
 public class PfBucket {
+
+    public enum RecurringType {
+        PERCENT, DOLLAR_AMOUNT
+    }
 
     public enum RecurringInterval {
         DAILY, WEEKLY, BIWEEKLY, BIMONTHLY, MONTHLY, QUARTERLY, YEARLY
@@ -19,7 +25,13 @@ public class PfBucket {
     private String name;
 
     @Column(nullable = false)
-    private double currentAmount;
+    private boolean autofill;
+
+    @Enumerated(EnumType.ORDINAL)
+    private RecurringType recurringType;
+
+    @Enumerated(EnumType.ORDINAL)
+    private RecurringInterval recurringInterval;
 
     @Column(nullable = false)
     private double recurringAmount;
@@ -27,38 +39,29 @@ public class PfBucket {
     @Column(nullable = false)
     private double maximumAmount;
 
-    @Enumerated(EnumType.ORDINAL)
-    private RecurringInterval recurringInterval;
+    @Column(nullable = false)
+    private double availableAmount;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "pf_category_id")
     private PfCategory pfCategory;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @OneToMany(mappedBy = "pfBucket")
+    private List<TransactionAutoAssign> transactionAutoAssigns;
 
     public PfBucket() {
-
     }
 
-    public PfBucket(String name, double recurringAmount, double maximumAmount) {
+    public PfBucket(String name, boolean autofill, RecurringType recurringType, RecurringInterval recurringInterval, double recurringAmount, double maximumAmount, double availableAmount, PfCategory pfCategory) {
         this.name = name;
-        this.recurringAmount = recurringAmount;
-        this.maximumAmount = maximumAmount;
-        this.currentAmount = 0;
-    }
-
-    public PfBucket(String name, double recurringAmount, double maximumAmount, RecurringInterval recurringInterval) {
-        this.name = name;
-        this.recurringAmount = recurringAmount;
-        this.maximumAmount = maximumAmount;
+        this.autofill = autofill;
+        this.recurringType = recurringType;
         this.recurringInterval = recurringInterval;
-    }
-
-    public PfBucket(Long id) {
-        this.id = id;
+        this.recurringAmount = recurringAmount;
+        this.maximumAmount = maximumAmount;
+        this.availableAmount = availableAmount;
+        this.pfCategory = pfCategory;
     }
 
     public Long getId() {
@@ -77,12 +80,28 @@ public class PfBucket {
         this.name = name;
     }
 
-    public double getCurrentAmount() {
-        return currentAmount;
+    public boolean isAutofill() {
+        return autofill;
     }
 
-    public void setCurrentAmount(double currentAmount) {
-        this.currentAmount = currentAmount;
+    public void setAutofill(boolean autofill) {
+        this.autofill = autofill;
+    }
+
+    public RecurringType getRecurringType() {
+        return recurringType;
+    }
+
+    public void setRecurringType(RecurringType recurringType) {
+        this.recurringType = recurringType;
+    }
+
+    public RecurringInterval getRecurringInterval() {
+        return recurringInterval;
+    }
+
+    public void setRecurringInterval(RecurringInterval recurringInterval) {
+        this.recurringInterval = recurringInterval;
     }
 
     public double getRecurringAmount() {
@@ -101,28 +120,27 @@ public class PfBucket {
         this.maximumAmount = maximumAmount;
     }
 
-    public RecurringInterval getRecurringInterval() {
-        return recurringInterval;
+    public double getAvailableAmount() {
+        return availableAmount;
     }
 
-    public void setRecurringInterval(RecurringInterval recurringInterval) {
-        this.recurringInterval = recurringInterval;
+    public void setAvailableAmount(double availableAmount) {
+        this.availableAmount = availableAmount;
     }
 
-    public PfCategory getGroup() {
+    public PfCategory getPfCategory() {
         return pfCategory;
     }
 
-    public void setGroup(PfCategory pfCategory) {
+    public void setPfCategory(PfCategory pfCategory) {
         this.pfCategory = pfCategory;
     }
 
-    public User getUser() {
-        return user;
+    public List<TransactionAutoAssign> getTransactionAutoAssigns() {
+        return transactionAutoAssigns;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setTransactionAutoAssigns(List<TransactionAutoAssign> transactionAutoAssigns) {
+        this.transactionAutoAssigns = transactionAutoAssigns;
     }
-
 }
