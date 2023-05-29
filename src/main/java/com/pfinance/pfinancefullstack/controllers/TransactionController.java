@@ -45,7 +45,7 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions")
-    public List<Expense> getUserExpenses() throws ParseException, IOException {
+    public List<Transaction> getUserExpenses() throws ParseException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         System.out.println("Inside getUserExpenses");
         User user = UserUtils.currentUser(userDao);
@@ -95,8 +95,9 @@ public class TransactionController {
 //            transactions.addAll(response.body().getTransactions());
 //        }
 
-        List<Expense> userExpenses = new ArrayList<>();
-
-        return userExpenses;
+//        List<Expense> userExpenses = new ArrayList<>();
+//
+//        return userExpenses;
+        return transactions;
     }
 }

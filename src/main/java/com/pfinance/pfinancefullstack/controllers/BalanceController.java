@@ -35,7 +35,7 @@ public class BalanceController {
     }
 
     @GetMapping("/balance")
-    public void testGetBudget() throws IOException {
+    public List<AccountBase> testGetBudget() throws IOException {
         System.out.println("Inside testGetBudget");
         ObjectMapper mapper = new ObjectMapper();
         User user = UserUtils.currentUser(userDao);
@@ -50,5 +50,6 @@ public class BalanceController {
         assert response.body() != null;
         List<AccountBase> accounts = response.body().getAccounts();
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(accounts));
+        return accounts;
     }
 }
