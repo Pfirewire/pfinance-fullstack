@@ -1,18 +1,19 @@
 package com.pfinance.pfinancefullstack.controllers;
 
+import com.pfinance.pfinancefullstack.models.PlaidLink;
 import com.pfinance.pfinancefullstack.models.User;
+import com.pfinance.pfinancefullstack.repositories.PlaidLinkRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.services.CreateLinkTokenService;
 import com.pfinance.pfinancefullstack.services.PlaidClientService;
 import com.plaid.client.model.ItemPublicTokenExchangeRequest;
 import com.plaid.client.model.ItemPublicTokenExchangeResponse;
-import com.plaid.client.request.PlaidApi;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @CrossOrigin("http://localhost:3000")
@@ -22,16 +23,17 @@ public class PlaidController {
     @Autowired
     private CreateLinkTokenService createLinkTokenService;
 
-    private UserRepository userDao;
-    private PlaidApi plaidClient;
+    private final UserRepository userDao;
+    private final PlaidLinkRepository plaidLinkDao;
 
 
     @Autowired
     private PlaidClientService plaidClientService;
 
 
-    public PlaidController(UserRepository userDao) {
+    public PlaidController(UserRepository userDao, PlaidLinkRepository plaidLinkDao) {
         this.userDao = userDao;
+        this.plaidLinkDao = plaidLinkDao;
     }
 
     @PostMapping("/create-link-token")
@@ -47,12 +49,11 @@ public class PlaidController {
         System.out.println("Inside exchangePublicToken");
         System.out.println(publicToken);
 
-        plaidClient = plaidClientService.createPlaidClient();
 
         ItemPublicTokenExchangeRequest request = new ItemPublicTokenExchangeRequest()
                 .publicToken(publicToken);
 
-        Response<ItemPublicTokenExchangeResponse> response = plaidClient
+        Response<ItemPublicTokenExchangeResponse> response = plaidClientService.createPlaidClient()
                 .itemPublicTokenExchange(request)
                 .execute();
 
@@ -60,8 +61,11 @@ public class PlaidController {
             return "400 Error";
         }
 
-        user.setAccessToken(response.body().getAccessToken());
-        user.setItemId(response.body().getItemId());
+        PlaidLink plaidLink = new PlaidLink(response.body().getAccessToken(), response.body().getItemId(), user);
+        plaidLinkDao.save(plaidLink);
+        List<PlaidLink> userPlaidLinks = user.getPlaidLinks();
+        userPlaidLinks.add(plaidLink);
+        user.setPlaidLinks(userPlaidLinks);
         userDao.save(user);
 
         return "tested";

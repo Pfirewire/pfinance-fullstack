@@ -37,6 +37,9 @@ public class PfBucket {
     private double recurringAmount;
 
     @Column(nullable = false)
+    private double assignedAmount;
+
+    @Column(nullable = false)
     private double maximumAmount;
 
     @Column(nullable = false)
@@ -56,12 +59,13 @@ public class PfBucket {
     public PfBucket() {
     }
 
-    public PfBucket(String name, boolean autofill, RecurringType recurringType, RecurringInterval recurringInterval, double recurringAmount, double maximumAmount, double availableAmount, PfCategory pfCategory) {
+    public PfBucket(String name, boolean autofill, RecurringType recurringType, RecurringInterval recurringInterval, double recurringAmount, double assignedAmount, double maximumAmount, double availableAmount, PfCategory pfCategory) {
         this.name = name;
         this.autofill = autofill;
         this.recurringType = recurringType;
         this.recurringInterval = recurringInterval;
         this.recurringAmount = recurringAmount;
+        this.assignedAmount = assignedAmount;
         this.maximumAmount = maximumAmount;
         this.availableAmount = availableAmount;
         this.pfCategory = pfCategory;
@@ -113,6 +117,14 @@ public class PfBucket {
 
     public void setRecurringAmount(double recurringAmount) {
         this.recurringAmount = recurringAmount;
+    }
+
+    public double getAssignedAmount() {
+        return assignedAmount;
+    }
+
+    public void setAssignedAmount(double assignedAmount) {
+        this.assignedAmount = assignedAmount;
     }
 
     public double getMaximumAmount() {

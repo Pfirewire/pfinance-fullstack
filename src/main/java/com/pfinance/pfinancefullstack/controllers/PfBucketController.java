@@ -6,10 +6,13 @@ import com.pfinance.pfinancefullstack.models.PfBucket;
 import com.pfinance.pfinancefullstack.models.PfCategory;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.PfBucketRepository;
+import com.pfinance.pfinancefullstack.repositories.PfBudgetRepository;
 import com.pfinance.pfinancefullstack.repositories.PfCategoryRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
+import com.pfinance.pfinancefullstack.services.Validate;
 import com.pfinance.pfinancefullstack.utils.CalculateGroup;
 import com.pfinance.pfinancefullstack.utils.UserUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,80 +26,65 @@ public class PfBucketController {
 
     ObjectMapper mapper = new ObjectMapper();
     private final UserRepository userDao;
-    private final PfCategoryRepository groupDao;
+    private final PfBudgetRepository pfBudgetDao;
+    private final PfCategoryRepository pfCategoryDao;
     private final PfBucketRepository pfBucketDao;
 
-    public PfBucketController(UserRepository userDao, PfCategoryRepository groupDao, PfBucketRepository pfBucketDao) {
+    @Autowired
+    private Validate validate;
+
+    public PfBucketController(UserRepository userDao, PfBudgetRepository pfBudgetDao, PfCategoryRepository pfCategoryDao, PfBucketRepository pfBucketDao) {
         this.userDao = userDao;
-        this.groupDao = groupDao;
+        this.pfBudgetDao = pfBudgetDao;
+        this.pfCategoryDao = pfCategoryDao;
         this.pfBucketDao = pfBucketDao;
     }
 
     @GetMapping("/buckets/{id}")
-    public List<PfBucket> getBucketsByGroupId(@PathVariable Long id) throws JsonProcessingException {
-        User user = UserUtils.currentUser(userDao);
-        if(!groupDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        PfCategory pfCategory = groupDao.findById(id).get();
-        if(!user.getGroups().contains(pfCategory)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        List<PfBucket> pfBuckets = pfBucketDao.findAllByGroup(pfCategory);
+    public List<PfBucket> getBucketsByPfCategoryId(@PathVariable Long id) throws JsonProcessingException {
+        PfCategory pfCategory = validate.userOwnsPfCategory(id);
+        List<PfBucket> pfBuckets = pfBucketDao.findAllByPfCategory(pfCategory);
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(pfBuckets));
         return pfBuckets;
     }
 
     @PostMapping("/buckets/{id}")
-    public PfBucket addBucketByGroupId(@PathVariable Long id, @RequestBody PfBucket pfBucket) throws JsonProcessingException {
-        User user = UserUtils.currentUser(userDao);
-        if(!groupDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        PfCategory pfCategory = groupDao.findById(id).get();
-        if(!user.getGroups().contains(pfCategory)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        pfBucket.setUser(user);
-        pfBucket.setGroup(pfCategory);
+    public PfBucket addBucketByPfCategoryId(@PathVariable Long id, @RequestBody PfBucket pfBucket) throws JsonProcessingException {
+        PfCategory pfCategory = validate.userOwnsPfCategory(id);
+        pfBucket.setPfCategory(pfCategory);
         pfBucketDao.save(pfBucket);
-        CalculateGroup.addAmount(pfCategory, pfBucket, groupDao);
+        CalculateGroup.addAmount(pfCategory, pfBucket, pfCategoryDao);
         return pfBucket;
     }
 
     @GetMapping("/bucket/{id}")
-    public PfBucket getBucketById(@PathVariable Long id) throws JsonProcessingException {
-        User user = UserUtils.currentUser(userDao);
-        if(!pfBucketDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        PfBucket pfBucket = pfBucketDao.findById(id).get();
-        if(!user.getBuckets().contains(pfBucket)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    public PfBucket getPfBucketById(@PathVariable Long id) throws JsonProcessingException {
+        PfBucket pfBucket = validate.userOwnsPfBucket(id);
+        System.out.println((userDao.findByPfBudgets_PfCategories_PfBuckets(pfBucket)).getUsername());
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(pfBucket));
         return pfBucket;
     }
 
     @PutMapping("/bucket/{id}")
-    public PfBucket updateBucketById(@PathVariable Long id, @RequestBody PfBucket updatedPfBucket) throws JsonProcessingException {
-        User user = UserUtils.currentUser(userDao);
-        if(!pfBucketDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        PfBucket pfBucket = pfBucketDao.findById(id).get();
-        if(!user.getBuckets().contains(pfBucket)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    public PfBucket updatePfBucketById(@PathVariable Long id, @RequestBody PfBucket updatedPfBucket) throws JsonProcessingException {
+        PfBucket pfBucket = validate.userOwnsPfBucket(id);
         updatedPfBucket.setId(pfBucket.getId());
-        updatedPfBucket.setGroup(pfBucket.getGroup());
-        updatedPfBucket.setUser(user);
+        updatedPfBucket.setPfCategory(pfBucket.getPfCategory());
         pfBucketDao.save(updatedPfBucket);
-        CalculateGroup.allAmounts(pfBucket.getGroup(), groupDao);
+        CalculateGroup.allAmounts(pfBucket.getPfCategory(), pfCategoryDao);
         return updatedPfBucket;
     }
 
     @DeleteMapping("/bucket/{id}")
-    public PfBucket deleteBucketById(@PathVariable Long id) throws JsonProcessingException {
-        User user = UserUtils.currentUser(userDao);
-        if(!pfBucketDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        PfBucket pfBucket = pfBucketDao.findById(id).get();
-        if(!user.getBuckets().contains(pfBucket)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        PfCategory pfCategory = groupDao.findByBuckets(pfBucket);
-        List<PfBucket> groupPfBuckets = pfCategory.getBuckets();
-        groupPfBuckets.remove(pfBucket);
-        pfCategory.setBuckets(groupPfBuckets);
-        groupDao.save(pfCategory);
-        List<PfBucket> userPfBuckets = user.getBuckets();
-        userPfBuckets.remove(pfBucket);
-        user.setBuckets(userPfBuckets);
-        userDao.save(user);
+    public PfBucket deletePfBucketById(@PathVariable Long id) throws JsonProcessingException {
+        PfBucket pfBucket = validate.userOwnsPfBucket(id);
+        PfCategory pfCategory = pfCategoryDao.findByPfBuckets(pfBucket);
+        List<PfBucket> pfCategoryPfBuckets = pfCategory.getPfBuckets();
+        pfCategoryPfBuckets.remove(pfBucket);
+        pfCategory.setPfBuckets(pfCategoryPfBuckets);
+        pfCategoryDao.save(pfCategory);
         pfBucketDao.delete(pfBucket);
-        CalculateGroup.allAmounts(pfCategory, groupDao);
+        CalculateGroup.allAmounts(pfCategory, pfCategoryDao);
         return pfBucket;
     }
 }

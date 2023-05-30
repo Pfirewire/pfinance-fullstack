@@ -10,7 +10,5 @@ import java.util.List;
 
 @Repository
 public interface PfBucketRepository extends JpaRepository<PfBucket, Long> {
-    List<PfBucket> findAllByGroup(PfCategory pfCategory);
-
-    List<PfBucket> findAllByUser(User user);
+    List<PfBucket> findAllByPfCategory(PfCategory pfCategory);
 }

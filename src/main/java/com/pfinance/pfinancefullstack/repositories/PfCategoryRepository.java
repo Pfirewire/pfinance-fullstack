@@ -11,7 +11,5 @@ import java.util.List;
 @Repository
 public interface PfCategoryRepository extends JpaRepository<PfCategory, Long> {
 
-    List<PfCategory> findAllByUser(User user);
-
-    PfCategory findByBuckets(PfBucket pfBucket);
+    PfCategory findByPfBuckets(PfBucket pfBucket);
 }
