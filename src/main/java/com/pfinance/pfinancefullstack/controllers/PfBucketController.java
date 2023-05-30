@@ -4,18 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pfinance.pfinancefullstack.models.PfBucket;
 import com.pfinance.pfinancefullstack.models.PfCategory;
-import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.PfBucketRepository;
 import com.pfinance.pfinancefullstack.repositories.PfBudgetRepository;
 import com.pfinance.pfinancefullstack.repositories.PfCategoryRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.services.Validate;
-import com.pfinance.pfinancefullstack.utils.CalculateGroup;
-import com.pfinance.pfinancefullstack.utils.UserUtils;
+import com.pfinance.pfinancefullstack.utils.CalculatePfCategory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -53,7 +49,7 @@ public class PfBucketController {
         PfCategory pfCategory = validate.userOwnsPfCategory(id);
         pfBucket.setPfCategory(pfCategory);
         pfBucketDao.save(pfBucket);
-        CalculateGroup.addAmount(pfCategory, pfBucket, pfCategoryDao);
+        CalculatePfCategory.addAmount(pfCategory, pfBucket, pfCategoryDao);
         return pfBucket;
     }
 
@@ -71,7 +67,7 @@ public class PfBucketController {
         updatedPfBucket.setId(pfBucket.getId());
         updatedPfBucket.setPfCategory(pfBucket.getPfCategory());
         pfBucketDao.save(updatedPfBucket);
-        CalculateGroup.allAmounts(pfBucket.getPfCategory(), pfCategoryDao);
+        CalculatePfCategory.allAmounts(pfBucket.getPfCategory(), pfCategoryDao);
         return updatedPfBucket;
     }
 
@@ -84,7 +80,7 @@ public class PfBucketController {
         pfCategory.setPfBuckets(pfCategoryPfBuckets);
         pfCategoryDao.save(pfCategory);
         pfBucketDao.delete(pfBucket);
-        CalculateGroup.allAmounts(pfCategory, pfCategoryDao);
+        CalculatePfCategory.allAmounts(pfCategory, pfCategoryDao);
         return pfBucket;
     }
 }

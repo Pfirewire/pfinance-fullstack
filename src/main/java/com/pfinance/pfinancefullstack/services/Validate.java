@@ -28,6 +28,14 @@ public class Validate {
         this.pfBucketDao = pfBucketDao;
     }
 
+    public PfBudget userOwnsPfBudget(long id) {
+        User user = UserUtils.currentUser(userDao);
+        if(!pfBudgetDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        PfBudget pfBudget = pfBudgetDao.findById(id).get();
+        if(!user.getPfBudgets().contains(pfBudget)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        return pfBudget;
+    }
+
     public PfCategory userOwnsPfCategory(long id) {
         User user = UserUtils.currentUser(userDao);
         if(!pfCategoryDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);

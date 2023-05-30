@@ -1,5 +1,6 @@
 package com.pfinance.pfinancefullstack.utils;
 
+import com.pfinance.pfinancefullstack.models.PfBudget;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
