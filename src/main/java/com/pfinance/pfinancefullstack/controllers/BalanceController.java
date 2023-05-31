@@ -43,7 +43,7 @@ public class BalanceController {
     public PfAccount getBalanceByPfAccountId(@PathVariable long id) throws IOException {
         System.out.println("Inside testGetBudget");
         PfAccount pfAccount = validate.userOwnsPfAccount(id);
-        pfAccount = plaidApi.updateBalanceByPfAccount(pfAccount);
+        pfAccount = plaidApi.updateAndReturnBalanceByPfAccount(pfAccount);
         return pfAccount;
     }
 }

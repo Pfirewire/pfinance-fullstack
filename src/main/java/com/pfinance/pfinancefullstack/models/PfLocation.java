@@ -6,8 +6,8 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "locations")
-public class Location {
+@Table(name = "pf_locations")
+public class PfLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +23,13 @@ public class Location {
     private String state;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "pfLocation")
     private List<PfTransaction> pfTransactions;
 
-    public Location() {
+    public PfLocation() {
     }
 
-    public Location(String address, String city, String state) {
+    public PfLocation(String address, String city, String state) {
         this.address = address;
         this.city = city;
         this.state = state;

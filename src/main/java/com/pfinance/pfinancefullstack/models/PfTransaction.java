@@ -10,7 +10,15 @@ import java.util.List;
 public class PfTransaction {
 
     public enum ChannelType {
-        ONLINE, IN_STORE, OTHER
+        ONLINE("online"),
+        IN_STORE("in store"),
+        OTHER("other");
+
+        public final String label;
+
+        private ChannelType(String label) {
+            this.label = label;
+        }
     }
 
     @Id
@@ -59,8 +67,8 @@ public class PfTransaction {
     private PfAccount pfAccount;
 
     @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
+    @JoinColumn(name = "pf_location_id")
+    private PfLocation pfLocation;
 
     @JsonIgnore
     @ManyToOne
@@ -91,7 +99,7 @@ public class PfTransaction {
             boolean pending,
             ChannelType channelType,
             PfAccount pfAccount,
-            Location location
+            PfLocation pfLocation
     ) {
         this.plaidAccountId = plaidAccountId;
         this.plaidPendingTransactionId = plaidPendingTransactionId;
@@ -105,7 +113,7 @@ public class PfTransaction {
         this.pending = pending;
         this.channelType = channelType;
         this.pfAccount = pfAccount;
-        this.location = location;
+        this.pfLocation = pfLocation;
     }
 
     public Long getId() {
@@ -212,12 +220,12 @@ public class PfTransaction {
         this.pfAccount = pfAccount;
     }
 
-    public Location getLocation() {
-        return location;
+    public PfLocation getPfLocation() {
+        return pfLocation;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setPfLocation(PfLocation pfLocation) {
+        this.pfLocation = pfLocation;
     }
 
     public PfBucket getPfBucket() {

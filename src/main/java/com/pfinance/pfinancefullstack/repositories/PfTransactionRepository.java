@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PfTransactionRepository extends JpaRepository<PfTransaction, Long> {
+    boolean existsByPlaidTransactionId(String plaidTransactionId);
 }

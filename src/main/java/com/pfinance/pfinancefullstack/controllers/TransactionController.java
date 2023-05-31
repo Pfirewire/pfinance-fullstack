@@ -1,10 +1,14 @@
 package com.pfinance.pfinancefullstack.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pfinance.pfinancefullstack.models.PfAccount;
+import com.pfinance.pfinancefullstack.models.PfTransaction;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.services.JsonPrint;
+import com.pfinance.pfinancefullstack.services.PlaidApiService;
 import com.pfinance.pfinancefullstack.services.PlaidClientService;
+import com.pfinance.pfinancefullstack.services.Validate;
 import com.pfinance.pfinancefullstack.utils.UserUtils;
 import com.plaid.client.model.Transaction;
 import com.plaid.client.model.TransactionsGetRequest;
@@ -25,10 +29,9 @@ import java.util.List;
 public class TransactionController {
 
     @Autowired
-    private PlaidClientService plaidClient;
-
+    private Validate validate;
     @Autowired
-    private JsonPrint jsonPrint;
+    private PlaidApiService plaidApi;
 
     private final UserRepository userDao;
 
@@ -37,26 +40,12 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions/{id}/{days}")
-    public List<Transaction> getPfTransactionsByPfAccount(@PathVariable long id, @PathVariable int days) throws ParseException, IOException {
+    public List<PfTransaction> getPfTransactionsByPfAccount(@PathVariable long id, @PathVariable int days) throws ParseException, IOException {
         System.out.println("Inside getPfTransactionsByPfAccount");
-        LocalDate currentDate = LocalDate.now();
-        LocalDate startDate = currentDate.minusDays(days);
+        PfAccount pfAccount = validate.userOwnsPfAccount(id);
+        List<PfTransaction> pfTransactions = plaidApi.updateAndReturnPfTransactionsByPfAccountAndDays(pfAccount, days);
 
-// Pull transactions for a date range
 
-        TransactionsGetRequest request = new TransactionsGetRequest()
-                .accessToken(user.getAccessToken())
-                .startDate(startDate)
-                .endDate(currentDate);
-
-        Response<TransactionsGetResponse> response = plaidClient.createPlaidClient().transactionsGet(request).execute();
-
-        List<Transaction> transactions = new ArrayList <>();
-        System.out.println("transactions:");
-        jsonPrint.object(response.body().getTransactions());
-
-        transactions.addAll(response.body().getTransactions());
-
-        return transactions;
+        return pfTransactions;
     }
 }
