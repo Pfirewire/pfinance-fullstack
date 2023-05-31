@@ -45,13 +45,30 @@ public class PfAccount {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "plaid_link_id")
+    private PlaidLink plaidLink;
+
     @OneToMany(mappedBy = "pfAccount")
     private List<PfTransaction> pfTransactions;
 
     public PfAccount() {
     }
 
-    public PfAccount(String plaidAccountId, double availableBalance, double currentBalance, String isoCurrencyCode, String mask, String name, String officialName, String type, String subtype) {
+    public PfAccount(
+            String plaidAccountId,
+            double availableBalance,
+            double currentBalance,
+            String isoCurrencyCode,
+            String mask,
+            String name,
+            String officialName,
+            String type,
+            String subtype,
+            User user,
+            PlaidLink plaidLink
+    ) {
         this.plaidAccountId = plaidAccountId;
         this.availableBalance = availableBalance;
         this.currentBalance = currentBalance;
@@ -61,6 +78,8 @@ public class PfAccount {
         this.officialName = officialName;
         this.type = type;
         this.subtype = subtype;
+        this.user = user;
+        this.plaidLink = plaidLink;
     }
 
     public Long getId() {
@@ -149,6 +168,14 @@ public class PfAccount {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public PlaidLink getPlaidLink() {
+        return plaidLink;
+    }
+
+    public void setPlaidLink(PlaidLink plaidLink) {
+        this.plaidLink = plaidLink;
     }
 
     public List<PfTransaction> getPfTransactions() {

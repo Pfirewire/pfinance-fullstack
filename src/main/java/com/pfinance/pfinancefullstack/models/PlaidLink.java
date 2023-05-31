@@ -3,6 +3,8 @@ package com.pfinance.pfinancefullstack.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "plaid_links")
 public class PlaidLink {
@@ -19,7 +21,12 @@ public class PlaidLink {
 
     @JsonIgnore
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "plaidLink")
+    private List<PfAccount> pfAccounts;
 
     public PlaidLink() {
     }
@@ -60,5 +67,13 @@ public class PlaidLink {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<PfAccount> getPfAccounts() {
+        return pfAccounts;
+    }
+
+    public void setPfAccounts(List<PfAccount> pfAccounts) {
+        this.pfAccounts = pfAccounts;
     }
 }

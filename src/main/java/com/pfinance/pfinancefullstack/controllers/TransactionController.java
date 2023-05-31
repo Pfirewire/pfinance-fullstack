@@ -32,7 +32,8 @@
 //
 //    @Autowired
 //    private JsonPrint jsonPrint;
-//    private UserRepository userDao;
+//
+//    private final UserRepository userDao;
 //
 //    public TransactionController(UserRepository userDao) {
 //        this.userDao = userDao;
