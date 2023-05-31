@@ -108,27 +108,26 @@ public class CreateLinkTokenService {
 
     public List<PfAccount> newPlaidLink(PlaidLink plaidLink) throws IOException {
         List<PfAccount> pfAccounts = new ArrayList<>();
-        List<PfAccount> plaidLinkPfAccounts = plaidLink.getPfAccounts();
         List<AccountBase> plaidAccounts = plaidApi.getAccountsByPlaidLink(plaidLink);
         for(AccountBase plaidAccount : plaidAccounts) {
             PfAccount pfAccount = new PfAccount(
                 plaidAccount.getAccountId(),
-                    plaidAccount.getBalances().getAvailable(),
-                    plaidAccount.getBalances().getCurrent(),
-                    plaidAccount.getBalances().getIsoCurrencyCode(),
-                    plaidAccount.getMask(),
-                    plaidAccount.getName(),
-                    plaidAccount.getOfficialName(),
-                    plaidAccount.getType().toString(),
-                    plaidAccount.getSubtype().toString(),
-                    UserUtils.currentUser(userDao),
-                    plaidLink
+                plaidAccount.getBalances().getAvailable(),
+                plaidAccount.getBalances().getCurrent(),
+                plaidAccount.getBalances().getIsoCurrencyCode(),
+                plaidAccount.getMask(),
+                plaidAccount.getName(),
+                plaidAccount.getOfficialName(),
+                plaidAccount.getType().toString(),
+                plaidAccount.getSubtype() != null ? plaidAccount.getSubtype().toString() : null,
+                UserUtils.currentUser(userDao),
+                plaidLink
             );
-            plaidLinkPfAccounts.add(pfAccount);
             pfAccounts.add(pfAccount);
+            pfAccountDao.save(pfAccount);
             jsonPrint.object(pfAccount);
         }
-        plaidLink.setPfAccounts(plaidLinkPfAccounts);
+        plaidLink.setPfAccounts(pfAccounts);
         plaidLinkDao.save(plaidLink);
         return pfAccounts;
     }

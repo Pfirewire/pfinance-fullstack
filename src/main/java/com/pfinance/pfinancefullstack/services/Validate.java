@@ -1,10 +1,7 @@
 package com.pfinance.pfinancefullstack.services;
 
 import com.pfinance.pfinancefullstack.models.*;
-import com.pfinance.pfinancefullstack.repositories.PfBucketRepository;
-import com.pfinance.pfinancefullstack.repositories.PfBudgetRepository;
-import com.pfinance.pfinancefullstack.repositories.PfCategoryRepository;
-import com.pfinance.pfinancefullstack.repositories.UserRepository;
+import com.pfinance.pfinancefullstack.repositories.*;
 import com.pfinance.pfinancefullstack.utils.UserUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,15 +11,25 @@ import org.springframework.web.server.ResponseStatusException;
 public class Validate {
 
     private final UserRepository userDao;
+    private final PfAccountRepository pfAccountDao;
     private final PfBudgetRepository pfBudgetDao;
     private final PfCategoryRepository pfCategoryDao;
     private final PfBucketRepository pfBucketDao;
 
-    public Validate(UserRepository userDao, PfBudgetRepository pfBudgetDao, PfCategoryRepository pfCategoryDao, PfBucketRepository pfBucketDao) {
+    public Validate(UserRepository userDao, PfAccountRepository pfAccountDao, PfBudgetRepository pfBudgetDao, PfCategoryRepository pfCategoryDao, PfBucketRepository pfBucketDao) {
         this.userDao = userDao;
+        this.pfAccountDao = pfAccountDao;
         this.pfBudgetDao = pfBudgetDao;
         this.pfCategoryDao = pfCategoryDao;
         this.pfBucketDao = pfBucketDao;
+    }
+
+    public PfAccount userOwnsPfAccount(long id) {
+        User user = UserUtils.currentUser(userDao);
+        if(!pfAccountDao.existsById(id)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        PfAccount pfAccount = pfAccountDao.findById(id).get();
+        if(!user.equals(userDao.findByPlaidLinks_PfAccounts(pfAccount))) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        return pfAccount;
     }
 
     public PfBudget userOwnsPfBudget(long id) {

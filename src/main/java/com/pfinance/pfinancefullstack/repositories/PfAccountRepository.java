@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PfAccountRepository extends JpaRepository<PfAccount, Long> {
+    PfAccount findByPlaidAccountId(String plaidAccountId);
 }
