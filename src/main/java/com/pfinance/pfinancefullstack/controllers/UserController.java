@@ -57,7 +57,7 @@ public class UserController {
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             userExists = true;
             User user = userDao.findByUsername(authentication.getName());
-            if(user.getPlaidLinks() != null) tokenExists = true;
+            if(user.getPlaidLinks().size() > 0) tokenExists = true;
         }
         return new UserStatus(userExists, tokenExists);
     }

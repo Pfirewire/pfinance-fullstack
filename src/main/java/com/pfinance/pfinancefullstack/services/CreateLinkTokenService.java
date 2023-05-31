@@ -1,36 +1,47 @@
 package com.pfinance.pfinancefullstack.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.pfinance.pfinancefullstack.models.PfAccount;
+import com.pfinance.pfinancefullstack.models.PlaidLink;
 import com.pfinance.pfinancefullstack.models.User;
-import com.plaid.client.ApiClient;
+import com.pfinance.pfinancefullstack.repositories.PfAccountRepository;
+import com.pfinance.pfinancefullstack.repositories.PlaidLinkRepository;
+import com.pfinance.pfinancefullstack.repositories.UserRepository;
+import com.pfinance.pfinancefullstack.utils.UserUtils;
 import com.plaid.client.model.*;
 import com.plaid.client.request.PlaidApi;
 import com.plaid.client.model.LinkTokenCreateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.http.server.reactive.HttpHandler;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class CreateLinkTokenService {
 
     @Autowired
     private PlaidTokenService plaidToken;
-
-    private PlaidApi plaidClient;
-
+    @Autowired
+    private PlaidApiService plaidApi;
     @Autowired
     private PlaidClientService plaidClientService;
+    @Autowired
+    private JsonPrint jsonPrint;
+
+    private PlaidApi plaidClient;
+    private final UserRepository userDao;
+    private final PlaidLinkRepository plaidLinkDao;
+    private final PfAccountRepository pfAccountDao;
+
+
+    public CreateLinkTokenService(UserRepository userDao, PlaidLinkRepository plaidLinkDao, PfAccountRepository pfAccountDao) {
+        this.userDao = userDao;
+        this.plaidLinkDao = plaidLinkDao;
+        this.pfAccountDao = pfAccountDao;
+    }
 
     public String getLinkToken(User currentUser) throws IOException {
         System.out.println("Inside getLinkToken");
@@ -94,4 +105,32 @@ public class CreateLinkTokenService {
 //    public void handle(ServerHttpRequest request, ServerHttpResponse response) {
 //        return null;
 //    }
+
+    public List<PfAccount> newPlaidLink(PlaidLink plaidLink) throws IOException {
+        List<PfAccount> pfAccounts = new ArrayList<>();
+        List<PfAccount> plaidLinkPfAccounts = plaidLink.getPfAccounts();
+        List<AccountBase> plaidAccounts = plaidApi.getAccountsByPlaidLink(plaidLink);
+        for(AccountBase plaidAccount : plaidAccounts) {
+            PfAccount pfAccount = new PfAccount(
+                plaidAccount.getAccountId(),
+                    plaidAccount.getBalances().getAvailable(),
+                    plaidAccount.getBalances().getCurrent(),
+                    plaidAccount.getBalances().getIsoCurrencyCode(),
+                    plaidAccount.getMask(),
+                    plaidAccount.getName(),
+                    plaidAccount.getOfficialName(),
+                    plaidAccount.getType().toString(),
+                    plaidAccount.getSubtype().toString(),
+                    UserUtils.currentUser(userDao),
+                    plaidLink
+            );
+            plaidLinkPfAccounts.add(pfAccount);
+            pfAccounts.add(pfAccount);
+            jsonPrint.object(pfAccount);
+        }
+        plaidLink.setPfAccounts(plaidLinkPfAccounts);
+        plaidLinkDao.save(plaidLink);
+        return pfAccounts;
+    }
+
 }

@@ -5,6 +5,7 @@ import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.PlaidLinkRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.services.CreateLinkTokenService;
+import com.pfinance.pfinancefullstack.services.JsonPrint;
 import com.pfinance.pfinancefullstack.services.PlaidClientService;
 import com.plaid.client.model.ItemPublicTokenExchangeRequest;
 import com.plaid.client.model.ItemPublicTokenExchangeResponse;
@@ -22,13 +23,13 @@ public class PlaidController {
 
     @Autowired
     private CreateLinkTokenService createLinkTokenService;
+    @Autowired
+    private PlaidClientService plaidClientService;
+    @Autowired
+    private JsonPrint jsonPrint;
 
     private final UserRepository userDao;
     private final PlaidLinkRepository plaidLinkDao;
-
-
-    @Autowired
-    private PlaidClientService plaidClientService;
 
 
     public PlaidController(UserRepository userDao, PlaidLinkRepository plaidLinkDao) {
@@ -60,6 +61,8 @@ public class PlaidController {
         if(response.code() == 400) {
             return "400 Error";
         }
+
+        jsonPrint.object(response.body());
 
         PlaidLink plaidLink = new PlaidLink(response.body().getAccessToken(), response.body().getItemId(), user);
         plaidLinkDao.save(plaidLink);

@@ -1,9 +1,6 @@
 package com.pfinance.pfinancefullstack.services;
 
-import com.pfinance.pfinancefullstack.models.PfBucket;
-import com.pfinance.pfinancefullstack.models.PfBudget;
-import com.pfinance.pfinancefullstack.models.PfCategory;
-import com.pfinance.pfinancefullstack.models.User;
+import com.pfinance.pfinancefullstack.models.*;
 import com.pfinance.pfinancefullstack.repositories.PfBucketRepository;
 import com.pfinance.pfinancefullstack.repositories.PfBudgetRepository;
 import com.pfinance.pfinancefullstack.repositories.PfCategoryRepository;
