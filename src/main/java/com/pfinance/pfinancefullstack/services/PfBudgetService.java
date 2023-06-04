@@ -28,7 +28,7 @@ public class PfBudgetService {
         this.pfBucketDao = pfBucketDao;
     }
 
-    public PfBudget createNextMonthBudget(User user) {
+    public PfBudget createNextMonthPfBudget(User user) {
         PfBudget oldPfBudget = getMostRecentPfBudget(user);
         PfBudget nextPfBudget;
         if(oldPfBudget.getMonth() == 12) {
