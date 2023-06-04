@@ -33,6 +33,11 @@ public class PfCategory {
     public PfCategory() {
     }
 
+    public PfCategory(String name, PfBudget pfBudget) {
+        this.name = name;
+        this.pfBudget = pfBudget;
+    }
+
     public PfCategory(String name, double totalAssignedAmount, double totalAvailableAmount, PfBudget pfBudget) {
         this.name = name;
         this.totalAssignedAmount = totalAssignedAmount;

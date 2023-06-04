@@ -1,6 +1,8 @@
 package com.pfinance.pfinancefullstack.services;
 
+import com.pfinance.pfinancefullstack.models.PfBucket;
 import com.pfinance.pfinancefullstack.models.PfBudget;
+import com.pfinance.pfinancefullstack.models.PfCategory;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.PfBucketRepository;
 import com.pfinance.pfinancefullstack.repositories.PfBudgetRepository;
@@ -8,6 +10,7 @@ import com.pfinance.pfinancefullstack.repositories.PfCategoryRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -42,11 +45,12 @@ public class PfBudgetService {
             );
         }
         pfBudgetDao.save(nextPfBudget);
+        fillPfBudgetWithEmptyPfCategoriesAndPfBuckets(nextPfBudget, oldPfBudget);
         List<PfBudget> userPfBudgets = user.getPfBudgets();
         userPfBudgets.add(nextPfBudget);
         user.setPfBudgets(userPfBudgets);
         userDao.save(user);
-
+        return nextPfBudget;
     }
 
     public PfBudget getMostRecentPfBudget(User user) {
@@ -63,7 +67,34 @@ public class PfBudgetService {
         return mostRecentPfBudget;
     }
 
-    public PfBudget fillPfBudgetWithEmptyBuckets(PfBudget pfBudget, PfBudget oldPfBudget) {
-
+    public void fillPfBudgetWithEmptyPfCategoriesAndPfBuckets(PfBudget pfBudget, PfBudget oldPfBudget) {
+        List<PfCategory> oldPfCategories = oldPfBudget.getPfCategories();
+        List<PfCategory> pfCategories = new ArrayList<>();
+        for(PfCategory oldPfCategory : oldPfCategories) {
+            PfCategory pfCategory = new PfCategory(oldPfCategory.getName(), pfBudget);
+            pfCategoryDao.save(pfCategory);
+            pfCategories.add(pfCategory);
+            List<PfBucket> oldPfBuckets = oldPfCategory.getPfBuckets();
+            List<PfBucket> pfBuckets = new ArrayList<>();
+            for(PfBucket oldPfBucket : oldPfBuckets) {
+                PfBucket pfBucket = new PfBucket(
+                        oldPfBucket.getName(),
+                        oldPfBucket.isAutofill(),
+                        oldPfBucket.getRecurringType(),
+                        oldPfBucket.getRecurringInterval(),
+                        oldPfBucket.getRecurringAmount(),
+                        0,
+                        oldPfBucket.getMaximumAmount(),
+                        0,
+                        pfCategory
+                );
+                pfBucketDao.save(pfBucket);
+                pfBuckets.add(pfBucket);
+            }
+            pfCategory.setPfBuckets(pfBuckets);
+            pfCategoryDao.save(pfCategory);
+        }
+        pfBudget.setPfCategories(pfCategories);
+        pfBudgetDao.save(pfBudget);
     }
 }

@@ -15,5 +15,4 @@ public class UserUtils {
         return userDao.findByUsername(currentUsername());
     }
 
-
 }
