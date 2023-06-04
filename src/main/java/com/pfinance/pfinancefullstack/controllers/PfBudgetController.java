@@ -1,14 +1,12 @@
 package com.pfinance.pfinancefullstack.controllers;
 
+import com.pfinance.pfinancefullstack.models.PfBucket;
 import com.pfinance.pfinancefullstack.models.PfBudget;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.PfBudgetRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.utils.UserUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,9 +24,15 @@ public class PfBudgetController {
     }
 
     @GetMapping("/budgets")
-    public List<PfBudget> getUserPfBudgets() {
+    public List<PfBudget> getPfBudgetsByUser() {
         User user = UserUtils.currentUser(userDao);
         return pfBudgetDao.findAllByUser(user);
+    }
+
+    @PostMapping("/budgets")
+    public PfBudget createPfBudgetByUser() {
+        User user = UserUtils.currentUser(userDao);
+
     }
 
 

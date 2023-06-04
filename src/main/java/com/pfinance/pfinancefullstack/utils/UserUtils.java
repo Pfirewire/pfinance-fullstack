@@ -14,4 +14,6 @@ public class UserUtils {
     public static User currentUser(UserRepository userDao) {
         return userDao.findByUsername(currentUsername());
     }
+
+
 }

@@ -14,10 +14,10 @@ public class PfBudget {
     private Long id;
 
     @Column(nullable = false)
-    private String month;
+    private int month;
 
     @Column(nullable = false)
-    private String year;
+    private int year;
 
     @JsonIgnore
     @ManyToOne
@@ -30,7 +30,7 @@ public class PfBudget {
     public PfBudget() {
     }
 
-    public PfBudget(String month, String year, User user) {
+    public PfBudget(int month, int year, User user) {
         this.month = month;
         this.year = year;
         this.user = user;
@@ -44,19 +44,19 @@ public class PfBudget {
         this.id = id;
     }
 
-    public String getMonth() {
+    public int getMonth() {
         return month;
     }
 
-    public void setMonth(String month) {
+    public void setMonth(int month) {
         this.month = month;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(int year) {
         this.year = year;
     }
 
