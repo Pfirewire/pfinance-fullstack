@@ -10,6 +10,7 @@ import com.pfinance.pfinancefullstack.repositories.PfCategoryRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,12 @@ public class PfBudgetService {
     }
 
     public PfBudget createNewUserPfBudget(User user) {
-
+        LocalDate currentDate = LocalDate.now();
+        return new PfBudget(
+                currentDate.getMonth().getValue(),
+                currentDate.getYear(),
+                user
+        );
     }
 
     public PfBudget createNextMonthPfBudget(User user) {
