@@ -28,6 +28,10 @@ public class PfBudgetService {
         this.pfBucketDao = pfBucketDao;
     }
 
+    public PfBudget createNewUserPfBudget(User user) {
+
+    }
+
     public PfBudget createNextMonthPfBudget(User user) {
         PfBudget oldPfBudget = getMostRecentPfBudget(user);
         PfBudget nextPfBudget;
