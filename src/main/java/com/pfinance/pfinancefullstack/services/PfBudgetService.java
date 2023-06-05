@@ -31,11 +31,13 @@ public class PfBudgetService {
 
     public PfBudget createNewUserPfBudget(User user) {
         LocalDate currentDate = LocalDate.now();
-        return new PfBudget(
+        PfBudget pfBudget = new PfBudget(
                 currentDate.getMonth().getValue(),
                 currentDate.getYear(),
                 user
-        );
+            );
+        pfBudgetDao.save(pfBudget);
+        return pfBudget;
     }
 
     public PfBudget createNextMonthPfBudget(User user) {

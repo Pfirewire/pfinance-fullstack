@@ -6,8 +6,10 @@ import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.models.UserStatus;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.services.LoginUserService;
+import com.pfinance.pfinancefullstack.services.PfBudgetService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,9 @@ import java.io.IOException;
 @RequestMapping("/user")
 @CrossOrigin("http://localhost:3000")
 public class UserController {
+
+    @Autowired
+    private PfBudgetService pfBudgetService;
 
     private final UserRepository userDao;
     private final PasswordEncoder passwordEncoder;
@@ -43,6 +48,8 @@ public class UserController {
         String hash = passwordEncoder.encode(user.getPassword());
         // Setting user password to the hash and saving user to table
         user.setPassword(hash);
+        userDao.save(user);
+        pfBudgetService.createNewUserPfBudget(user);
         userDao.save(user);
         LoginDto loginDto = new LoginDto(user.getUsername(), plainPassword);
         return loginUserService.logUserInAndReturnJwtToken(loginDto, req, res);
