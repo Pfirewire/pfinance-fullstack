@@ -55,6 +55,7 @@ public class SecurityConfiguration {
                 .authorizeRequests( auth -> auth
                         .requestMatchers(
                                 "/api/**",
+                                "/api/budget/**",
                                 "/api/group/**",
                                 "/api/plaid/**",
                                 "/api/balance/**",

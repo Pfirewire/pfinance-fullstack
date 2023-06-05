@@ -8,6 +8,7 @@ import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.utils.UserUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -29,11 +30,18 @@ public class PfBudgetController {
         return pfBudgetDao.findAllByUser(user);
     }
 
-    @PostMapping("/budgets")
-    public PfBudget createPfBudgetByUser() {
+    @GetMapping("/budget/current")
+    public PfBudget getCurrentPfBudgetByUser() {
         User user = UserUtils.currentUser(userDao);
-
+        LocalDate localDate = LocalDate.now();
+        return pfBudgetDao.findByUserAndMonthAndYear(user, localDate.getMonth().getValue(), localDate.getYear());
     }
+
+//    @PostMapping("/budgets")
+//    public PfBudget createPfBudgetByUser() {
+//        User user = UserUtils.currentUser(userDao);
+//
+//    }
 
 
 }

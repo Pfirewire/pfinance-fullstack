@@ -13,5 +13,5 @@ import java.util.List;
 public interface PfBudgetRepository extends JpaRepository<PfBudget, Long> {
     List<PfBudget> findAllByUser(User user);
     PfBudget findByPfCategories(PfCategory pfCategory);
-    PfBudget findByUserAndMonthAndYear(User user, String month, String year);
+    PfBudget findByUserAndMonthAndYear(User user, int month, int year);
 }
