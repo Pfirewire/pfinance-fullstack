@@ -13,6 +13,7 @@ public class PfAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String plaidAccountId;
 
