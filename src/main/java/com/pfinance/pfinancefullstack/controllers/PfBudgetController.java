@@ -32,6 +32,7 @@ public class PfBudgetController {
 
     @GetMapping("/budget/current")
     public PfBudget getCurrentPfBudgetByUser() {
+        System.out.println("Inside getCurrentPfBudgetByUser");
         User user = UserUtils.currentUser(userDao);
         LocalDate localDate = LocalDate.now();
         return pfBudgetDao.findByUserAndMonthAndYear(user, localDate.getMonth().getValue(), localDate.getYear());

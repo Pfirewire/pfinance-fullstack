@@ -1,16 +1,20 @@
 package com.pfinance.pfinancefullstack.controllers;
 
+import com.pfinance.pfinancefullstack.models.PfAccount;
 import com.pfinance.pfinancefullstack.models.PlaidLink;
 import com.pfinance.pfinancefullstack.models.User;
 import com.pfinance.pfinancefullstack.repositories.PlaidLinkRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
 import com.pfinance.pfinancefullstack.services.CreateLinkTokenService;
 import com.pfinance.pfinancefullstack.services.JsonPrint;
+import com.pfinance.pfinancefullstack.services.PlaidApiService;
 import com.pfinance.pfinancefullstack.services.PlaidClientService;
 import com.plaid.client.model.ItemPublicTokenExchangeRequest;
 import com.plaid.client.model.ItemPublicTokenExchangeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import retrofit2.Response;
 
 import java.io.IOException;
@@ -27,6 +31,8 @@ public class PlaidController {
     private PlaidClientService plaidClientService;
     @Autowired
     private JsonPrint jsonPrint;
+    @Autowired
+    private PlaidApiService plaidApi;
 
     private final UserRepository userDao;
     private final PlaidLinkRepository plaidLinkDao;
@@ -45,7 +51,7 @@ public class PlaidController {
     }
 
     @PostMapping("/exchange-public-token")
-    public String exchangePublicToken(@RequestBody String publicToken) throws IOException {
+    public List<PfAccount> exchangePublicToken(@RequestBody String publicToken) throws IOException {
         User user = userDao.findById(1L).get();
         System.out.println("Inside exchangePublicToken");
         System.out.println(publicToken);
@@ -59,7 +65,8 @@ public class PlaidController {
                 .execute();
 
         if(response.code() == 400) {
-            return "400 Error";
+            System.out.println("400 error in exchangePublicToken");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         jsonPrint.object(response.body());
@@ -71,7 +78,7 @@ public class PlaidController {
         user.setPlaidLinks(userPlaidLinks);
         userDao.save(user);
 
-        return "tested";
+        return plaidApi.createPfAccountsWithPlaidLink(plaidLink, user);
     }
 
 }

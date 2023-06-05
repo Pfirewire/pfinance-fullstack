@@ -1,13 +1,7 @@
 package com.pfinance.pfinancefullstack.services;
 
-import com.pfinance.pfinancefullstack.models.PfAccount;
-import com.pfinance.pfinancefullstack.models.PfLocation;
-import com.pfinance.pfinancefullstack.models.PfTransaction;
-import com.pfinance.pfinancefullstack.models.PlaidLink;
-import com.pfinance.pfinancefullstack.repositories.PfLocationRepository;
-import com.pfinance.pfinancefullstack.repositories.PfAccountRepository;
-import com.pfinance.pfinancefullstack.repositories.PfTransactionRepository;
-import com.pfinance.pfinancefullstack.repositories.UserRepository;
+import com.pfinance.pfinancefullstack.models.*;
+import com.pfinance.pfinancefullstack.repositories.*;
 import com.plaid.client.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,12 +22,14 @@ public class PlaidApiService {
     private final PfAccountRepository pfAccountDao;
     private final PfTransactionRepository pfTransactionDao;
     private final PfLocationRepository pfLocationDao;
+    private final PlaidLinkRepository plaidLinkDao;
 
-    public PlaidApiService(UserRepository userDao, PfAccountRepository pfAccountDao, PfTransactionRepository pfTransactionDao, PfLocationRepository pfLocationDao) {
+    public PlaidApiService(UserRepository userDao, PfAccountRepository pfAccountDao, PfTransactionRepository pfTransactionDao, PfLocationRepository pfLocationDao, PlaidLinkRepository plaidLinkDao) {
         this.userDao = userDao;
         this.pfAccountDao = pfAccountDao;
         this.pfTransactionDao = pfTransactionDao;
         this.pfLocationDao = pfLocationDao;
+        this.plaidLinkDao = plaidLinkDao;
     }
 
     public List<AccountBase> getAccountsByPlaidLink(PlaidLink plaidLink) throws IOException {
@@ -131,5 +127,43 @@ public class PlaidApiService {
         }
         pfAccountDao.save(pfAccount);
         return pfAccount;
+    }
+
+    public List<PfAccount> createPfAccountsWithPlaidLink(PlaidLink plaidLink, User user) throws IOException {
+        final String accessToken = plaidLink.getPlaidAccessToken();
+        AccountsBalanceGetRequest request = new AccountsBalanceGetRequest().accessToken(accessToken);
+        Response<AccountsGetResponse> response = plaidClient
+                .createPlaidClient()
+                .accountsBalanceGet(request)
+                .execute();
+        assert response.body() != null;
+        List<AccountBase> accounts = response.body().getAccounts();
+        List<PfAccount> userPfAccounts = user.getPfAccounts();
+        List<PfAccount> newPfAccounts = new ArrayList<>();
+        for(AccountBase account : accounts) {
+            if(!pfAccountDao.existsByPlaidAccountId(account.getAccountId())){
+                PfAccount newPfAccount = new PfAccount(
+                        account.getAccountId(),
+                        account.getBalances().getAvailable(),
+                        account.getBalances().getCurrent(),
+                        account.getBalances().getIsoCurrencyCode(),
+                        account.getMask(),
+                        account.getName(),
+                        account.getOfficialName(),
+                        account.getType().toString(),
+                        account.getSubtype() != null ? account.getSubtype().toString() : null,
+                        user,
+                        plaidLink
+                );
+                userPfAccounts.add(newPfAccount);
+                newPfAccounts.add(newPfAccount);
+                pfAccountDao.save(newPfAccount);
+            }
+        }
+        user.setPfAccounts(userPfAccounts);
+        userDao.save(user);
+        plaidLink.setPfAccounts(newPfAccounts);
+        plaidLinkDao.save(plaidLink);
+        return newPfAccounts;
     }
 }
