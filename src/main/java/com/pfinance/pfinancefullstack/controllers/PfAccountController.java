@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api")
+@CrossOrigin("http://localhost:3000")
 public class PfAccountController {
 
     private final UserRepository userDao;
@@ -24,6 +24,7 @@ public class PfAccountController {
 
     @GetMapping("/accounts")
     public List<PfAccount> getPfAccountsByUser() {
+        System.out.println("Inside getPfAccountsByUser");
         User user = UserUtils.currentUser(userDao);
         return user.getPfAccounts();
     }

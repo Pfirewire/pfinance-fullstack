@@ -110,22 +110,24 @@ public class CreateLinkTokenService {
         List<PfAccount> pfAccounts = new ArrayList<>();
         List<AccountBase> plaidAccounts = plaidApi.getAccountsByPlaidLink(plaidLink);
         for(AccountBase plaidAccount : plaidAccounts) {
-            PfAccount pfAccount = new PfAccount(
-                plaidAccount.getAccountId(),
-                plaidAccount.getBalances().getAvailable(),
-                plaidAccount.getBalances().getCurrent(),
-                plaidAccount.getBalances().getIsoCurrencyCode(),
-                plaidAccount.getMask(),
-                plaidAccount.getName(),
-                plaidAccount.getOfficialName(),
-                plaidAccount.getType().toString(),
-                plaidAccount.getSubtype() != null ? plaidAccount.getSubtype().toString() : null,
-                UserUtils.currentUser(userDao),
-                plaidLink
-            );
-            pfAccounts.add(pfAccount);
-            pfAccountDao.save(pfAccount);
-            jsonPrint.object(pfAccount);
+            if(!pfAccountDao.existsByPlaidAccountId(plaidAccount.getAccountId())) {
+                PfAccount pfAccount = new PfAccount(
+                        plaidAccount.getAccountId(),
+                        plaidAccount.getBalances().getAvailable(),
+                        plaidAccount.getBalances().getCurrent(),
+                        plaidAccount.getBalances().getIsoCurrencyCode(),
+                        plaidAccount.getMask(),
+                        plaidAccount.getName(),
+                        plaidAccount.getOfficialName(),
+                        plaidAccount.getType().toString(),
+                        plaidAccount.getSubtype() != null ? plaidAccount.getSubtype().toString() : null,
+                        UserUtils.currentUser(userDao),
+                        plaidLink
+                );
+                pfAccounts.add(pfAccount);
+                pfAccountDao.save(pfAccount);
+                jsonPrint.object(pfAccount);
+            }
         }
         plaidLink.setPfAccounts(pfAccounts);
         plaidLinkDao.save(plaidLink);

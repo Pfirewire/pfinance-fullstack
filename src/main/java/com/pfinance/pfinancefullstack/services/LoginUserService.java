@@ -2,6 +2,7 @@ package com.pfinance.pfinancefullstack.services;
 
 import com.pfinance.pfinancefullstack.dtos.LoginDto;
 import com.pfinance.pfinancefullstack.models.User;
+import com.pfinance.pfinancefullstack.utils.UserUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class LoginUserService {
     }
 
     public String logUserInAndReturnJwtToken(LoginDto loginDto, HttpServletRequest req, HttpServletResponse res) {
+        System.out.println("Inside logUserInAndReturnJwtToken");
         UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
         Authentication auth = authenticationManager.authenticate(authReq);
         SecurityContext sc = securityContextHolderStrategy.createEmptyContext();
@@ -43,6 +45,8 @@ public class LoginUserService {
         System.out.printf("Token requested for: %s%n", ((User) auth.getPrincipal()).getUsername());
         String token = tokenService.generateToken(auth);
         System.out.printf("Token granted: %s%n", token);
+        System.out.println("Current user");
+        System.out.println(UserUtils.currentUsername());
         return token;
     }
 }
