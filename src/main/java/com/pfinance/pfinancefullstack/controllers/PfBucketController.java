@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api")
+@CrossOrigin
 public class PfBucketController {
 
     ObjectMapper mapper = new ObjectMapper();
