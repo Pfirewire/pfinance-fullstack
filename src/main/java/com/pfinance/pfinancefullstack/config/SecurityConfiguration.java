@@ -51,18 +51,20 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
+                .cors().and()
                 .authorizeHttpRequests( auth -> auth
                         .requestMatchers(
-                                "/api/**",
+                                "/api/",
+                                "/api/accounts",
                                 "/api/accounts/**",
                                 "/api/account/**",
+                                "/api/balance/**",
+                                "/api/bucket/**",
+                                "/api/buckets/**",
                                 "/api/budget/**",
+                                "/api/categories/**",
                                 "/api/group/**",
                                 "/api/plaid/**",
-                                "/api/balance/**",
-                                "/api/buckets/**",
-                                "/api/bucket/**",
                                 "/api/transactions",
                                 "/test/**",
                                 "/token"

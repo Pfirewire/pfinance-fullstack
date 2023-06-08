@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin
 public class PfAccountController {
 
     private final UserRepository userDao;

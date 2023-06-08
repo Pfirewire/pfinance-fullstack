@@ -1,10 +1,12 @@
 package com.pfinance.pfinancefullstack.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pfinance.pfinancefullstack.models.PfBudget;
 import com.pfinance.pfinancefullstack.models.PfCategory;
 import com.pfinance.pfinancefullstack.repositories.PfBudgetRepository;
 import com.pfinance.pfinancefullstack.repositories.PfCategoryRepository;
 import com.pfinance.pfinancefullstack.repositories.UserRepository;
+import com.pfinance.pfinancefullstack.services.JsonPrint;
 import com.pfinance.pfinancefullstack.services.Validate;
 import com.pfinance.pfinancefullstack.utils.CalculatePfCategory;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,6 +20,8 @@ import java.util.List;
 @RequestMapping("/api")
 public class PfCategoryController {
 
+    @Autowired
+    private JsonPrint jsonPrint;
     @Autowired
     private Validate validate;
 
@@ -38,9 +42,12 @@ public class PfCategoryController {
     }
 
     @PostMapping("/categories/{id}")
-    public PfCategory addPfCategoryByPfBudgetId(@PathVariable long id, @RequestBody PfCategory pfCategory) {
+    public PfCategory addPfCategoryByPfBudgetId(@PathVariable long id, @RequestBody PfCategory pfCategory) throws JsonProcessingException {
         PfBudget pfBudget = validate.userOwnsPfBudget(id);
+        jsonPrint.object(pfBudget);
+        jsonPrint.object(pfCategory);
         pfCategory.setPfBudget(pfBudget);
+        jsonPrint.object(pfCategory);
         pfCategoryDao.save(pfCategory);
         List<PfCategory> pfCategories = pfBudget.getPfCategories();
         pfCategories.add(pfCategory);
