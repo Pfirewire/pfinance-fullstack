@@ -16,6 +16,8 @@ import java.util.List;
 public class PlaidApiService {
 
     @Autowired
+    private JsonPrint jsonPrint;
+    @Autowired
     private PlaidClientService plaidClient;
 
     private final UserRepository userDao;
@@ -61,6 +63,8 @@ public class PlaidApiService {
 
         List<Transaction> transactions = response.body() != null ? new ArrayList<>(response.body().getTransactions()) : new ArrayList<>();
         for(Transaction transaction : transactions) {
+            jsonPrint.object(transaction);
+            System.out.println(transaction.getPaymentChannel().name());
             if(!pfTransactionDao.existsByPlaidTransactionId(transaction.getTransactionId())) {
                 PfLocation pfLocation;
                 if(pfLocationDao.existsByAddressAndCityAndState(
@@ -92,12 +96,12 @@ public class PlaidApiService {
                         transaction.getDatetime() != null ? transaction.getDatetime().toString() : null,
                         transaction.getAuthorizedDatetime() != null ? transaction.getAuthorizedDatetime().toString() : null,
                         transaction.getPending(),
-                        PfTransaction.ChannelType.valueOf(transaction.getPaymentChannel().getValue()),
+                        PfTransaction.ChannelType.valueOf(transaction.getPaymentChannel().name()),
                         pfAccount,
                         pfLocation
                 );
                 pfTransactionDao.save(pfTransaction);
-                List<PfTransaction> pfTransactions = pfLocation.getPfTransactions();
+                List<PfTransaction> pfTransactions = pfLocation.getPfTransactions() != null ? pfLocation.getPfTransactions() : new ArrayList<>();
                 pfTransactions.add(pfTransaction);
                 pfLocation.setPfTransactions(pfTransactions);
                 pfLocationDao.save(pfLocation);
