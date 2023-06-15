@@ -1,26 +1,24 @@
 package com.pfinance.pfinancefullstack.controllers;
 
 import com.pfinance.pfinancefullstack.models.User;
-import com.pfinance.pfinancefullstack.services.TokenService;
+import com.pfinance.pfinancefullstack.services.JwtTokenService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
-
 @RestController
 public class HomeController {
 
-    private final TokenService tokenService;
+    private final JwtTokenService jwtTokenService;
 
-    public HomeController(TokenService tokenService) {
-        this.tokenService = tokenService;
+    public HomeController(JwtTokenService jwtTokenService) {
+        this.jwtTokenService = jwtTokenService;
     }
 
     @GetMapping("/")
     public String home(Authentication authentication) {
         System.out.printf("Token requested for: %s%n", ((User) authentication.getPrincipal()).getUsername());
-        String token = tokenService.generateToken(authentication);
+        String token = jwtTokenService.generateToken(authentication);
         System.out.printf("Token granted: %s%n", token);
         return token;
     }

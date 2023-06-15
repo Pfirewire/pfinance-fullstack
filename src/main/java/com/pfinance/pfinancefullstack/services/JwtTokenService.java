@@ -12,14 +12,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 
 @Service
-public class TokenService {
+public class JwtTokenService {
 
     private final JwtEncoder encoder;
 
-    public TokenService(JwtEncoder encoder) {
+    public JwtTokenService(JwtEncoder encoder) {
         this.encoder = encoder;
     }
 
+    // Builds JWT token for authenticated user
+    // This will be sent back to authenticate user during session with every request
     public String generateToken(Authentication authentication) {
         Instant now = Instant.now();
         String scope = authentication.getAuthorities().stream()

@@ -25,16 +25,20 @@ public class LoginUserService {
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
-    private final TokenService tokenService;
+    private final JwtTokenService jwtTokenService;
 
-    public LoginUserService(TokenService tokenService) {
-        this.tokenService = tokenService;
+    public LoginUserService(JwtTokenService jwtTokenService) {
+        this.jwtTokenService = jwtTokenService;
     }
 
     public String logUserInAndReturnJwtToken(LoginDto loginDto, HttpServletRequest req, HttpServletResponse res) {
         System.out.println("Inside logUserInAndReturnJwtToken");
+
+        // Converting login DTO username and password and using token to authenticate the user
         UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
         Authentication auth = authenticationManager.authenticate(authReq);
+
+        // Creating empty security context and setting successfully authenticated user in the context, then saving context
         SecurityContext sc = securityContextHolderStrategy.createEmptyContext();
         sc.setAuthentication(auth);
         securityContextHolderStrategy.setContext(sc);
@@ -43,7 +47,9 @@ public class LoginUserService {
 
         System.out.println(((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
         System.out.printf("Token requested for: %s%n", ((User) auth.getPrincipal()).getUsername());
-        String token = tokenService.generateToken(auth);
+
+        // Generating JWT token to return to front end
+        String token = jwtTokenService.generateToken(auth);
         System.out.printf("Token granted: %s%n", token);
         System.out.println("Current user");
         System.out.println(UserUtils.currentUsername());
