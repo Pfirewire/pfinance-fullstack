@@ -12,6 +12,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Service to run all Plaid API requests
+// Requests are done by creating Plaid API objects and running execute method
+// Utilizes PlaidClientService to house Plaid API information required to make request successfully
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 @Service
 public class PlaidApiService {
 
@@ -32,9 +39,14 @@ public class PlaidApiService {
         this.plaidLinkDao = plaidLinkDao;
     }
 
+    // Receives PlaidLink object from database
+    // Sends Plaid API request to get Accounts information attached to AccessToken in PlaidLink object
+    // If not null, returns List of Plaid AccountBase objects
     public List<AccountBase> getAccountsByPlaidLink(PlaidLink plaidLink) throws IOException {
         final String accessToken = plaidLink.getPlaidAccessToken();
+        // Packaging request object
         AccountsBalanceGetRequest request = new AccountsBalanceGetRequest().accessToken(accessToken);
+        // Executing request and receiving response object
         Response<AccountsGetResponse> response = plaidClient
                 .createPlaidClient()
                 .accountsBalanceGet(request)
@@ -43,26 +55,40 @@ public class PlaidApiService {
         return response.body().getAccounts();
     }
 
+    // Receives PfAccount object and int number of days
+    // Sends Plaid API request to get list of Transactions in an account, for the amount of days between "days" and now
+    // Returns List of ALL PfTransaction objects associated with PfAccount
     public List<PfTransaction> updateAndReturnPfTransactionsByPfAccountAndDays(PfAccount pfAccount, int days) throws IOException {
+
+        // Setting start and end date
         LocalDate currentDate = LocalDate.now();
         LocalDate startDate = currentDate.minusDays(days);
 
-        // Pull transactions for a date range
-
+        // Packaging request object
         TransactionsGetRequest request = new TransactionsGetRequest()
                 .accessToken(pfAccount.getPlaidLink().getPlaidAccessToken())
                 .startDate(startDate)
                 .endDate(currentDate);
 
+        // Executing request and receiving response object
         Response<TransactionsGetResponse> response = plaidClient
                 .createPlaidClient()
                 .transactionsGet(request)
                 .execute();
 
+        // If response body is not null creating list of Plaid Transaction objects
+        // Otherwise creating empty list
         List<Transaction> transactions = response.body() != null ? new ArrayList<>(response.body().getTransactions()) : new ArrayList<>();
+
+        // Looping through list to check by Plaid Transaction ID if a transaction exists in database
+        // If already exists, do nothing
         for(Transaction transaction : transactions) {
             if(!pfTransactionDao.existsByPlaidTransactionId(transaction.getTransactionId())) {
                 PfLocation pfLocation;
+
+                // Checks to see if location exists in database
+                // If so, set location to the location in database
+                // if not, create new location and save in database
                 if(pfLocationDao.existsByAddressAndCityAndState(
                         transaction.getLocation().getAddress(),
                         transaction.getLocation().getCity(),
@@ -81,6 +107,9 @@ public class PlaidApiService {
                     );
                     pfLocationDao.save(pfLocation);
                 }
+
+                // Creating new PfTransaction object with information from Plaid Transaction object
+                // Attaching PfAccount and PfLocation to PfTransaction object
                 PfTransaction pfTransaction = new PfTransaction(
                         transaction.getAccountId(),
                         transaction.getPendingTransactionId(),
@@ -96,6 +125,9 @@ public class PlaidApiService {
                         pfAccount,
                         pfLocation
                 );
+
+                // Sets other side of the relationship
+                // Saves PfTransaction and PfLocation in database
                 pfTransactionDao.save(pfTransaction);
                 List<PfTransaction> pfTransactions = pfLocation.getPfTransactions();
                 pfTransactions.add(pfTransaction);
@@ -103,18 +135,32 @@ public class PlaidApiService {
                 pfLocationDao.save(pfLocation);
             }
         }
+
+        // Returns all PfTransactions for account
         return pfAccount.getPfTransactions();
     }
 
+    // Receives PfAccount object
+    // Sends PlaidAPI request to get balance by PfAccount
+    // Method will also update balance in database
+    // Returns PfAccount object with updated balance property
     public PfAccount updateAndReturnBalanceByPfAccount(PfAccount pfAccount) throws IOException {
         final String accessToken = pfAccount.getPlaidLink().getPlaidAccessToken();
+
+        // Packaging request object
         AccountsBalanceGetRequest request = new AccountsBalanceGetRequest().accessToken(accessToken);
+
+        // Executing request and receiving response object
         Response<AccountsGetResponse> response = plaidClient
                 .createPlaidClient()
                 .accountsBalanceGet(request)
                 .execute();
+
+        // As long as response body is not null, sets List of Plaid Account objects
         assert response.body() != null;
         List<AccountBase> accounts = response.body().getAccounts();
+
+
         for(AccountBase account : accounts) {
             if(
                     account.getAccountId().equals(pfAccount.getPlaidAccountId()) &&

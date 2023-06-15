@@ -6,6 +6,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                            UNKNOWN IF IN USE
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 @RestController
 public class HomeController {
 
@@ -15,11 +21,11 @@ public class HomeController {
         this.jwtTokenService = jwtTokenService;
     }
 
-    @GetMapping("/")
-    public String home(Authentication authentication) {
-        System.out.printf("Token requested for: %s%n", ((User) authentication.getPrincipal()).getUsername());
-        String token = jwtTokenService.generateToken(authentication);
-        System.out.printf("Token granted: %s%n", token);
-        return token;
-    }
+//    @GetMapping("/")
+//    public String home(Authentication authentication) {
+//        System.out.printf("Token requested for: %s%n", ((User) authentication.getPrincipal()).getUsername());
+//        String token = jwtTokenService.generateToken(authentication);
+//        System.out.printf("Token granted: %s%n", token);
+//        return token;
+//    }
 }
