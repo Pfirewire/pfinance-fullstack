@@ -66,6 +66,8 @@ public class SecurityConfiguration {
                                 "/api/group/**",
                                 "/api/plaid/**",
                                 "/api/transactions",
+                                "/api/transactions/**",
+                                "/api/transactions/{id}/**",
                                 "/test/**",
                                 "/token"
                         ).authenticated()

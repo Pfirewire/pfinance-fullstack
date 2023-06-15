@@ -23,6 +23,8 @@ import java.util.List;
 public class PlaidApiService {
 
     @Autowired
+    private JsonPrint jsonPrint;
+    @Autowired
     private PlaidClientService plaidClient;
 
     private final UserRepository userDao;
@@ -83,6 +85,8 @@ public class PlaidApiService {
         // Looping through list to check by Plaid Transaction ID if a transaction exists in database
         // If already exists, do nothing
         for(Transaction transaction : transactions) {
+            jsonPrint.object(transaction);
+            System.out.println(transaction.getPaymentChannel().name());
             if(!pfTransactionDao.existsByPlaidTransactionId(transaction.getTransactionId())) {
                 PfLocation pfLocation;
 
@@ -121,7 +125,7 @@ public class PlaidApiService {
                         transaction.getDatetime() != null ? transaction.getDatetime().toString() : null,
                         transaction.getAuthorizedDatetime() != null ? transaction.getAuthorizedDatetime().toString() : null,
                         transaction.getPending(),
-                        PfTransaction.ChannelType.valueOf(transaction.getPaymentChannel().getValue()),
+                        PfTransaction.ChannelType.valueOf(transaction.getPaymentChannel().name()),
                         pfAccount,
                         pfLocation
                 );
@@ -129,7 +133,7 @@ public class PlaidApiService {
                 // Sets other side of the relationship
                 // Saves PfTransaction and PfLocation in database
                 pfTransactionDao.save(pfTransaction);
-                List<PfTransaction> pfTransactions = pfLocation.getPfTransactions();
+                List<PfTransaction> pfTransactions = pfLocation.getPfTransactions() != null ? pfLocation.getPfTransactions() : new ArrayList<>();
                 pfTransactions.add(pfTransaction);
                 pfLocation.setPfTransactions(pfTransactions);
                 pfLocationDao.save(pfLocation);

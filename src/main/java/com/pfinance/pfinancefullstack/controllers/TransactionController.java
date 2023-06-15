@@ -39,13 +39,19 @@ public class TransactionController {
         this.userDao = userDao;
     }
 
+    @GetMapping("/transactions/{id}")
+    public List<PfTransaction> getPfTransactionsByPfAccountIdDefault(@PathVariable long id, @PathVariable int days) throws ParseException, IOException {
+        System.out.println("Inside getPfTransactionsByPfAccount");
+        PfAccount pfAccount = validate.userOwnsPfAccount(id);
+        List<PfTransaction> pfTransactions = plaidApi.updateAndReturnPfTransactionsByPfAccountAndDays(pfAccount, 7);
+        return pfTransactions;
+    }
+
     @GetMapping("/transactions/{id}/{days}")
-    public List<PfTransaction> getPfTransactionsByPfAccount(@PathVariable long id, @PathVariable int days) throws ParseException, IOException {
+    public List<PfTransaction> getPfTransactionsByPfAccountId(@PathVariable long id, @PathVariable int days) throws ParseException, IOException {
         System.out.println("Inside getPfTransactionsByPfAccount");
         PfAccount pfAccount = validate.userOwnsPfAccount(id);
         List<PfTransaction> pfTransactions = plaidApi.updateAndReturnPfTransactionsByPfAccountAndDays(pfAccount, days);
-
-
         return pfTransactions;
     }
 }
